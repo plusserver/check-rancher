@@ -1,0 +1,1322 @@
+{
+    "actions": {},
+    "createDefaults": {},
+    "createTypes": {},
+    "data": [
+        {
+            "accountId": "1a5",
+            "actions": {
+                "deactivate": "http://127.0.0.1:8080/v2-beta/hosts/1h1/?action=deactivate",
+                "dockersocket": "http://127.0.0.1:8080/v2-beta/hosts/1h1/?action=dockersocket",
+                "update": "http://127.0.0.1:8080/v2-beta/hosts/1h1/?action=update"
+            },
+            "agentId": "1a1",
+            "agentIpAddress": "192.168.1.201",
+            "agentState": null,
+            "amazonec2Config": null,
+            "apiProxy": null,
+            "authCertificateAuthority": null,
+            "authKey": null,
+            "azureConfig": null,
+            "baseType": "host",
+            "computeTotal": 1000000,
+            "created": "2017-01-26T08:50:08Z",
+            "createdTS": 1485420608000,
+            "data": {
+                "fields": {
+                    "agentIpAddress": "192.168.1.201",
+                    "hostname": "docker02",
+                    "info": {
+                        "cpuInfo": {
+                            "count": 1,
+                            "cpuCoresPercentages": [
+                                0
+                            ],
+                            "loadAvg": [
+                                "0.09",
+                                "0.05",
+                                "0.05"
+                            ],
+                            "mhz": 2700.028,
+                            "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                        },
+                        "diskInfo": {
+                            "dockerStorageDriver": "devicemapper",
+                            "dockerStorageDriverStatus": {},
+                            "fileSystems": {
+                                "/dev/mapper/centos-root": {
+                                    "capacity": 8570
+                                },
+                                "/dev/mapper/docker-253:0-50506834-02956cb826ba5af51446820d3c599312bde36bd937ac7ca0ccd85c6087ac0f1f": {
+                                    "capacity": 10229
+                                }
+                            },
+                            "mountPoints": {
+                                "/dev/mapper/centos-root": {
+                                    "free": 6670,
+                                    "percentage": 22.165666934072345,
+                                    "total": 8570,
+                                    "used": 1899
+                                },
+                                "/dev/mapper/docker-253:0-50506834-02956cb826ba5af51446820d3c599312bde36bd937ac7ca0ccd85c6087ac0f1f": {
+                                    "free": 9976,
+                                    "percentage": 2.465913395737609,
+                                    "total": 10229,
+                                    "used": 252
+                                }
+                            }
+                        },
+                        "iopsInfo": {},
+                        "memoryInfo": {
+                            "active": 161,
+                            "buffers": 0,
+                            "cached": 192,
+                            "inactive": 162,
+                            "memAvailable": 183,
+                            "memFree": 40,
+                            "memTotal": 457,
+                            "swapCached": 4,
+                            "swapfree": 1011,
+                            "swaptotal": 1015
+                        },
+                        "osInfo": {
+                            "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                            "kernelVersion": "3.10.0",
+                            "operatingSystem": "CentOS Linux 7 (Core)"
+                        }
+                    },
+                    "labels": {
+                        "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                        "io.rancher.host.docker_version": "1.12",
+                        "io.rancher.host.linux_kernel_version": "3.10"
+                    },
+                    "physicalHostUuid": "082543a4-006b-449b-70a0-b6f06f36d2fc",
+                    "publicEndpoints": [
+                        {
+                            "hostId": "1",
+                            "instanceId": "5",
+                            "ipAddress": "192.168.1.201",
+                            "port": 500,
+                            "serviceId": "5"
+                        },
+                        {
+                            "hostId": "1",
+                            "instanceId": "5",
+                            "ipAddress": "192.168.1.201",
+                            "port": 4500,
+                            "serviceId": "5"
+                        }
+                    ],
+                    "reportedUuid": "3d672b50-69b1-4e6e-5e77-cee85755313f",
+                    "systemContainer": "",
+                    "type": "host"
+                }
+            },
+            "description": null,
+            "digitaloceanConfig": null,
+            "dockerVersion": null,
+            "driver": null,
+            "engineEnv": null,
+            "engineInsecureRegistry": null,
+            "engineInstallUrl": null,
+            "engineLabel": null,
+            "engineOpt": null,
+            "engineRegistryMirror": null,
+            "engineStorageDriver": null,
+            "hostname": "docker02",
+            "id": "1h1",
+            "info": {
+                "cpuInfo": {
+                    "count": 1,
+                    "cpuCoresPercentages": [
+                        0
+                    ],
+                    "loadAvg": [
+                        "0.09",
+                        "0.05",
+                        "0.05"
+                    ],
+                    "mhz": 2700.028,
+                    "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                },
+                "diskInfo": {
+                    "dockerStorageDriver": "devicemapper",
+                    "dockerStorageDriverStatus": {},
+                    "fileSystems": {
+                        "/dev/mapper/centos-root": {
+                            "capacity": 8570
+                        },
+                        "/dev/mapper/docker-253:0-50506834-02956cb826ba5af51446820d3c599312bde36bd937ac7ca0ccd85c6087ac0f1f": {
+                            "capacity": 10229
+                        }
+                    },
+                    "mountPoints": {
+                        "/dev/mapper/centos-root": {
+                            "free": 6670,
+                            "percentage": 22.165666934072345,
+                            "total": 8570,
+                            "used": 1899
+                        },
+                        "/dev/mapper/docker-253:0-50506834-02956cb826ba5af51446820d3c599312bde36bd937ac7ca0ccd85c6087ac0f1f": {
+                            "free": 9976,
+                            "percentage": 2.465913395737609,
+                            "total": 10229,
+                            "used": 252
+                        }
+                    }
+                },
+                "iopsInfo": {},
+                "memoryInfo": {
+                    "active": 161,
+                    "buffers": 0,
+                    "cached": 192,
+                    "inactive": 162,
+                    "memAvailable": 183,
+                    "memFree": 40,
+                    "memTotal": 457,
+                    "swapCached": 4,
+                    "swapfree": 1011,
+                    "swaptotal": 1015
+                },
+                "osInfo": {
+                    "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                    "kernelVersion": "3.10.0",
+                    "operatingSystem": "CentOS Linux 7 (Core)"
+                }
+            },
+            "instanceIds": [
+                "1i2",
+                "1i3",
+                "1i4",
+                "1i5",
+                "1i6",
+                "1i7",
+                "1i8",
+                "1i13",
+                "1i14",
+                "1i29"
+            ],
+            "kind": "docker",
+            "labels": {
+                "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                "io.rancher.host.docker_version": "1.12",
+                "io.rancher.host.linux_kernel_version": "3.10"
+            },
+            "links": {
+                "account": "http://127.0.0.1:8080/v2-beta/hosts/1h1/account",
+                "agent": "http://127.0.0.1:8080/v2-beta/hosts/1h1/agent",
+                "clusters": "http://127.0.0.1:8080/v2-beta/hosts/1h1/clusters",
+                "configItemStatuses": "http://127.0.0.1:8080/v2-beta/hosts/1h1/configitemstatuses",
+                "containerEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h1/containerevents",
+                "containerStats": "http://127.0.0.1:8080/v2-beta/hosts/1h1/containerstats",
+                "healthcheckInstanceHostMaps": "http://127.0.0.1:8080/v2-beta/hosts/1h1/healthcheckinstancehostmaps",
+                "hostLabels": "http://127.0.0.1:8080/v2-beta/hosts/1h1/hostlabels",
+                "hostStats": "http://127.0.0.1:8080/v2-beta/hosts/1h1/hoststats",
+                "hosts": "http://127.0.0.1:8080/v2-beta/hosts/1h1/hosts",
+                "instances": "http://127.0.0.1:8080/v2-beta/hosts/1h1/instances",
+                "ipAddresses": "http://127.0.0.1:8080/v2-beta/hosts/1h1/ipaddresses",
+                "physicalHost": "http://127.0.0.1:8080/v2-beta/hosts/1h1/physicalhost",
+                "self": "http://127.0.0.1:8080/v2-beta/hosts/1h1",
+                "serviceEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h1/serviceevents",
+                "stats": "http://127.0.0.1:8080/v2-beta/hosts/1h1/stats",
+                "storagePools": "http://127.0.0.1:8080/v2-beta/hosts/1h1/storagepools",
+                "volumes": "http://127.0.0.1:8080/v2-beta/hosts/1h1/volumes"
+            },
+            "localStorageMb": 7384264,
+            "memory": 479199232,
+            "milliCpu": 1000,
+            "name": null,
+            "packetConfig": null,
+            "physicalHostId": "1ph1",
+            "publicEndpoints": [
+                {
+                    "hostId": "1h1",
+                    "instanceId": "1i5",
+                    "ipAddress": "192.168.1.201",
+                    "port": 500,
+                    "serviceId": "1s5",
+                    "type": "publicEndpoint"
+                },
+                {
+                    "hostId": "1h1",
+                    "instanceId": "1i5",
+                    "ipAddress": "192.168.1.201",
+                    "port": 4500,
+                    "serviceId": "1s5",
+                    "type": "publicEndpoint"
+                }
+            ],
+            "removeTime": null,
+            "removed": null,
+            "state": "active",
+            "transitioning": "no",
+            "transitioningMessage": null,
+            "transitioningProgress": null,
+            "type": "host",
+            "uuid": "339e0029-2701-411d-bd9c-72f3af8463ff"
+        },
+        {
+            "accountId": "1a5",
+            "actions": {
+                "deactivate": "http://127.0.0.1:8080/v2-beta/hosts/1h2/?action=deactivate",
+                "dockersocket": "http://127.0.0.1:8080/v2-beta/hosts/1h2/?action=dockersocket",
+                "update": "http://127.0.0.1:8080/v2-beta/hosts/1h2/?action=update"
+            },
+            "agentId": "1a3",
+            "agentIpAddress": "192.168.1.203",
+            "agentState": null,
+            "amazonec2Config": null,
+            "apiProxy": null,
+            "authCertificateAuthority": null,
+            "authKey": null,
+            "azureConfig": null,
+            "baseType": "host",
+            "computeTotal": 1000000,
+            "created": "2017-01-26T08:50:09Z",
+            "createdTS": 1485420609000,
+            "data": {
+                "fields": {
+                    "agentIpAddress": "192.168.1.203",
+                    "hostname": "docker04",
+                    "info": {
+                        "cpuInfo": {
+                            "count": 1,
+                            "cpuCoresPercentages": [
+                                0
+                            ],
+                            "loadAvg": [
+                                "0.04",
+                                "0.03",
+                                "0.05"
+                            ],
+                            "mhz": 2699.878,
+                            "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                        },
+                        "diskInfo": {
+                            "dockerStorageDriver": "devicemapper",
+                            "dockerStorageDriverStatus": {},
+                            "fileSystems": {
+                                "/dev/mapper/centos-root": {
+                                    "capacity": 8570
+                                },
+                                "/dev/mapper/docker-253:0-50506834-853e6849c4527358963867c6a06772603dc8a81ad6be29e2855911b3440cdd88": {
+                                    "capacity": 10229
+                                }
+                            },
+                            "mountPoints": {
+                                "/dev/mapper/centos-root": {
+                                    "free": 6670,
+                                    "percentage": 22.165028806884482,
+                                    "total": 8570,
+                                    "used": 1899
+                                },
+                                "/dev/mapper/docker-253:0-50506834-853e6849c4527358963867c6a06772603dc8a81ad6be29e2855911b3440cdd88": {
+                                    "free": 9976,
+                                    "percentage": 2.465913395737609,
+                                    "total": 10229,
+                                    "used": 252
+                                }
+                            }
+                        },
+                        "iopsInfo": {},
+                        "memoryInfo": {
+                            "active": 160,
+                            "buffers": 0,
+                            "cached": 200,
+                            "inactive": 170,
+                            "memAvailable": 187,
+                            "memFree": 36,
+                            "memTotal": 457,
+                            "swapCached": 5,
+                            "swapfree": 1010,
+                            "swaptotal": 1015
+                        },
+                        "osInfo": {
+                            "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                            "kernelVersion": "3.10.0",
+                            "operatingSystem": "CentOS Linux 7 (Core)"
+                        }
+                    },
+                    "labels": {
+                        "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                        "io.rancher.host.docker_version": "1.12",
+                        "io.rancher.host.linux_kernel_version": "3.10"
+                    },
+                    "physicalHostUuid": "95016cb5-bfa4-4a41-55e6-1e77dbbf40b1",
+                    "publicEndpoints": [
+                        {
+                            "hostId": "2",
+                            "instanceId": "22",
+                            "ipAddress": "192.168.1.203",
+                            "port": 500,
+                            "serviceId": "5"
+                        },
+                        {
+                            "hostId": "2",
+                            "instanceId": "22",
+                            "ipAddress": "192.168.1.203",
+                            "port": 4500,
+                            "serviceId": "5"
+                        }
+                    ],
+                    "reportedUuid": "52f1dd18-8d8c-46b5-7810-8dc3e6b3483a",
+                    "systemContainer": "",
+                    "type": "host"
+                }
+            },
+            "description": null,
+            "digitaloceanConfig": null,
+            "dockerVersion": null,
+            "driver": null,
+            "engineEnv": null,
+            "engineInsecureRegistry": null,
+            "engineInstallUrl": null,
+            "engineLabel": null,
+            "engineOpt": null,
+            "engineRegistryMirror": null,
+            "engineStorageDriver": null,
+            "hostname": "docker04",
+            "id": "1h2",
+            "info": {
+                "cpuInfo": {
+                    "count": 1,
+                    "cpuCoresPercentages": [
+                        0
+                    ],
+                    "loadAvg": [
+                        "0.04",
+                        "0.03",
+                        "0.05"
+                    ],
+                    "mhz": 2699.878,
+                    "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                },
+                "diskInfo": {
+                    "dockerStorageDriver": "devicemapper",
+                    "dockerStorageDriverStatus": {},
+                    "fileSystems": {
+                        "/dev/mapper/centos-root": {
+                            "capacity": 8570
+                        },
+                        "/dev/mapper/docker-253:0-50506834-853e6849c4527358963867c6a06772603dc8a81ad6be29e2855911b3440cdd88": {
+                            "capacity": 10229
+                        }
+                    },
+                    "mountPoints": {
+                        "/dev/mapper/centos-root": {
+                            "free": 6670,
+                            "percentage": 22.165028806884482,
+                            "total": 8570,
+                            "used": 1899
+                        },
+                        "/dev/mapper/docker-253:0-50506834-853e6849c4527358963867c6a06772603dc8a81ad6be29e2855911b3440cdd88": {
+                            "free": 9976,
+                            "percentage": 2.465913395737609,
+                            "total": 10229,
+                            "used": 252
+                        }
+                    }
+                },
+                "iopsInfo": {},
+                "memoryInfo": {
+                    "active": 160,
+                    "buffers": 0,
+                    "cached": 200,
+                    "inactive": 170,
+                    "memAvailable": 187,
+                    "memFree": 36,
+                    "memTotal": 457,
+                    "swapCached": 5,
+                    "swapfree": 1010,
+                    "swaptotal": 1015
+                },
+                "osInfo": {
+                    "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                    "kernelVersion": "3.10.0",
+                    "operatingSystem": "CentOS Linux 7 (Core)"
+                }
+            },
+            "instanceIds": [
+                "1i11",
+                "1i12",
+                "1i15",
+                "1i17",
+                "1i18",
+                "1i21",
+                "1i22",
+                "1i24",
+                "1i25"
+            ],
+            "kind": "docker",
+            "labels": {
+                "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                "io.rancher.host.docker_version": "1.12",
+                "io.rancher.host.linux_kernel_version": "3.10"
+            },
+            "links": {
+                "account": "http://127.0.0.1:8080/v2-beta/hosts/1h2/account",
+                "agent": "http://127.0.0.1:8080/v2-beta/hosts/1h2/agent",
+                "clusters": "http://127.0.0.1:8080/v2-beta/hosts/1h2/clusters",
+                "configItemStatuses": "http://127.0.0.1:8080/v2-beta/hosts/1h2/configitemstatuses",
+                "containerEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h2/containerevents",
+                "containerStats": "http://127.0.0.1:8080/v2-beta/hosts/1h2/containerstats",
+                "healthcheckInstanceHostMaps": "http://127.0.0.1:8080/v2-beta/hosts/1h2/healthcheckinstancehostmaps",
+                "hostLabels": "http://127.0.0.1:8080/v2-beta/hosts/1h2/hostlabels",
+                "hostStats": "http://127.0.0.1:8080/v2-beta/hosts/1h2/hoststats",
+                "hosts": "http://127.0.0.1:8080/v2-beta/hosts/1h2/hosts",
+                "instances": "http://127.0.0.1:8080/v2-beta/hosts/1h2/instances",
+                "ipAddresses": "http://127.0.0.1:8080/v2-beta/hosts/1h2/ipaddresses",
+                "physicalHost": "http://127.0.0.1:8080/v2-beta/hosts/1h2/physicalhost",
+                "self": "http://127.0.0.1:8080/v2-beta/hosts/1h2",
+                "serviceEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h2/serviceevents",
+                "stats": "http://127.0.0.1:8080/v2-beta/hosts/1h2/stats",
+                "storagePools": "http://127.0.0.1:8080/v2-beta/hosts/1h2/storagepools",
+                "volumes": "http://127.0.0.1:8080/v2-beta/hosts/1h2/volumes"
+            },
+            "localStorageMb": 7384645,
+            "memory": 479199232,
+            "milliCpu": 1000,
+            "name": null,
+            "packetConfig": null,
+            "physicalHostId": "1ph2",
+            "publicEndpoints": [
+                {
+                    "hostId": "1h2",
+                    "instanceId": "1i22",
+                    "ipAddress": "192.168.1.203",
+                    "port": 500,
+                    "serviceId": "1s5",
+                    "type": "publicEndpoint"
+                },
+                {
+                    "hostId": "1h2",
+                    "instanceId": "1i22",
+                    "ipAddress": "192.168.1.203",
+                    "port": 4500,
+                    "serviceId": "1s5",
+                    "type": "publicEndpoint"
+                }
+            ],
+            "removeTime": null,
+            "removed": null,
+            "state": "active",
+            "transitioning": "no",
+            "transitioningMessage": null,
+            "transitioningProgress": null,
+            "type": "host",
+            "uuid": "4f1c7b51-48c6-43c0-a934-e0b2c639fa83"
+        },
+        {
+            "accountId": "1a5",
+            "actions": {
+                "deactivate": "http://127.0.0.1:8080/v2-beta/hosts/1h3/?action=deactivate",
+                "dockersocket": "http://127.0.0.1:8080/v2-beta/hosts/1h3/?action=dockersocket",
+                "update": "http://127.0.0.1:8080/v2-beta/hosts/1h3/?action=update"
+            },
+            "agentId": "1a2",
+            "agentIpAddress": "192.168.1.202",
+            "agentState": null,
+            "amazonec2Config": null,
+            "apiProxy": null,
+            "authCertificateAuthority": null,
+            "authKey": null,
+            "azureConfig": null,
+            "baseType": "host",
+            "computeTotal": 1000000,
+            "created": "2017-01-26T08:50:12Z",
+            "createdTS": 1485420612000,
+            "data": {
+                "fields": {
+                    "agentIpAddress": "192.168.1.202",
+                    "hostname": "docker03",
+                    "info": {
+                        "cpuInfo": {
+                            "count": 1,
+                            "cpuCoresPercentages": [
+                                0
+                            ],
+                            "loadAvg": [
+                                "0",
+                                "0.01",
+                                "0.05"
+                            ],
+                            "mhz": 2699.901,
+                            "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                        },
+                        "diskInfo": {
+                            "dockerStorageDriver": "devicemapper",
+                            "dockerStorageDriverStatus": {},
+                            "fileSystems": {
+                                "/dev/mapper/centos-root": {
+                                    "capacity": 8570
+                                },
+                                "/dev/mapper/docker-253:0-50506834-f3e7a4ada507d9678747c39eb0e9a74d25ea9e8ef7764cf51cc7d10fd0467eba": {
+                                    "capacity": 10229
+                                }
+                            },
+                            "mountPoints": {
+                                "/dev/mapper/centos-root": {
+                                    "free": 6691,
+                                    "percentage": 21.924637179113184,
+                                    "total": 8570,
+                                    "used": 1878
+                                },
+                                "/dev/mapper/docker-253:0-50506834-f3e7a4ada507d9678747c39eb0e9a74d25ea9e8ef7764cf51cc7d10fd0467eba": {
+                                    "free": 9976,
+                                    "percentage": 2.465913395737609,
+                                    "total": 10229,
+                                    "used": 252
+                                }
+                            }
+                        },
+                        "iopsInfo": {},
+                        "memoryInfo": {
+                            "active": 155,
+                            "buffers": 0,
+                            "cached": 197,
+                            "inactive": 171,
+                            "memAvailable": 190,
+                            "memFree": 42,
+                            "memTotal": 457,
+                            "swapCached": 5,
+                            "swapfree": 1010,
+                            "swaptotal": 1015
+                        },
+                        "osInfo": {
+                            "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                            "kernelVersion": "3.10.0",
+                            "operatingSystem": "CentOS Linux 7 (Core)"
+                        }
+                    },
+                    "labels": {
+                        "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                        "io.rancher.host.docker_version": "1.12",
+                        "io.rancher.host.linux_kernel_version": "3.10"
+                    },
+                    "physicalHostUuid": "b273ce96-f0a2-443f-624e-192f7e9b963c",
+                    "publicEndpoints": [
+                        {
+                            "hostId": "3",
+                            "instanceId": "26",
+                            "ipAddress": "192.168.1.202",
+                            "port": 500,
+                            "serviceId": "5"
+                        },
+                        {
+                            "hostId": "3",
+                            "instanceId": "26",
+                            "ipAddress": "192.168.1.202",
+                            "port": 4500,
+                            "serviceId": "5"
+                        }
+                    ],
+                    "reportedUuid": "1ee0b394-7007-4dcb-4f25-7ed01e59aa85",
+                    "systemContainer": "",
+                    "type": "host"
+                }
+            },
+            "description": null,
+            "digitaloceanConfig": null,
+            "dockerVersion": null,
+            "driver": null,
+            "engineEnv": null,
+            "engineInsecureRegistry": null,
+            "engineInstallUrl": null,
+            "engineLabel": null,
+            "engineOpt": null,
+            "engineRegistryMirror": null,
+            "engineStorageDriver": null,
+            "hostname": "docker03",
+            "id": "1h3",
+            "info": {
+                "cpuInfo": {
+                    "count": 1,
+                    "cpuCoresPercentages": [
+                        0
+                    ],
+                    "loadAvg": [
+                        "0",
+                        "0.01",
+                        "0.05"
+                    ],
+                    "mhz": 2699.901,
+                    "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                },
+                "diskInfo": {
+                    "dockerStorageDriver": "devicemapper",
+                    "dockerStorageDriverStatus": {},
+                    "fileSystems": {
+                        "/dev/mapper/centos-root": {
+                            "capacity": 8570
+                        },
+                        "/dev/mapper/docker-253:0-50506834-f3e7a4ada507d9678747c39eb0e9a74d25ea9e8ef7764cf51cc7d10fd0467eba": {
+                            "capacity": 10229
+                        }
+                    },
+                    "mountPoints": {
+                        "/dev/mapper/centos-root": {
+                            "free": 6691,
+                            "percentage": 21.924637179113184,
+                            "total": 8570,
+                            "used": 1878
+                        },
+                        "/dev/mapper/docker-253:0-50506834-f3e7a4ada507d9678747c39eb0e9a74d25ea9e8ef7764cf51cc7d10fd0467eba": {
+                            "free": 9976,
+                            "percentage": 2.465913395737609,
+                            "total": 10229,
+                            "used": 252
+                        }
+                    }
+                },
+                "iopsInfo": {},
+                "memoryInfo": {
+                    "active": 155,
+                    "buffers": 0,
+                    "cached": 197,
+                    "inactive": 171,
+                    "memAvailable": 190,
+                    "memFree": 42,
+                    "memTotal": 457,
+                    "swapCached": 5,
+                    "swapfree": 1010,
+                    "swaptotal": 1015
+                },
+                "osInfo": {
+                    "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                    "kernelVersion": "3.10.0",
+                    "operatingSystem": "CentOS Linux 7 (Core)"
+                }
+            },
+            "instanceIds": [
+                "1i9",
+                "1i10",
+                "1i16",
+                "1i19",
+                "1i20",
+                "1i23",
+                "1i26",
+                "1i27",
+                "1i28"
+            ],
+            "kind": "docker",
+            "labels": {
+                "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                "io.rancher.host.docker_version": "1.12",
+                "io.rancher.host.linux_kernel_version": "3.10"
+            },
+            "links": {
+                "account": "http://127.0.0.1:8080/v2-beta/hosts/1h3/account",
+                "agent": "http://127.0.0.1:8080/v2-beta/hosts/1h3/agent",
+                "clusters": "http://127.0.0.1:8080/v2-beta/hosts/1h3/clusters",
+                "configItemStatuses": "http://127.0.0.1:8080/v2-beta/hosts/1h3/configitemstatuses",
+                "containerEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h3/containerevents",
+                "containerStats": "http://127.0.0.1:8080/v2-beta/hosts/1h3/containerstats",
+                "healthcheckInstanceHostMaps": "http://127.0.0.1:8080/v2-beta/hosts/1h3/healthcheckinstancehostmaps",
+                "hostLabels": "http://127.0.0.1:8080/v2-beta/hosts/1h3/hostlabels",
+                "hostStats": "http://127.0.0.1:8080/v2-beta/hosts/1h3/hoststats",
+                "hosts": "http://127.0.0.1:8080/v2-beta/hosts/1h3/hosts",
+                "instances": "http://127.0.0.1:8080/v2-beta/hosts/1h3/instances",
+                "ipAddresses": "http://127.0.0.1:8080/v2-beta/hosts/1h3/ipaddresses",
+                "physicalHost": "http://127.0.0.1:8080/v2-beta/hosts/1h3/physicalhost",
+                "self": "http://127.0.0.1:8080/v2-beta/hosts/1h3",
+                "serviceEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h3/serviceevents",
+                "stats": "http://127.0.0.1:8080/v2-beta/hosts/1h3/stats",
+                "storagePools": "http://127.0.0.1:8080/v2-beta/hosts/1h3/storagepools",
+                "volumes": "http://127.0.0.1:8080/v2-beta/hosts/1h3/volumes"
+            },
+            "localStorageMb": 7384535,
+            "memory": 479199232,
+            "milliCpu": 1000,
+            "name": null,
+            "packetConfig": null,
+            "physicalHostId": "1ph3",
+            "publicEndpoints": [
+                {
+                    "hostId": "1h3",
+                    "instanceId": "1i26",
+                    "ipAddress": "192.168.1.202",
+                    "port": 500,
+                    "serviceId": "1s5",
+                    "type": "publicEndpoint"
+                },
+                {
+                    "hostId": "1h3",
+                    "instanceId": "1i26",
+                    "ipAddress": "192.168.1.202",
+                    "port": 4500,
+                    "serviceId": "1s5",
+                    "type": "publicEndpoint"
+                }
+            ],
+            "removeTime": null,
+            "removed": null,
+            "state": "active",
+            "transitioning": "no",
+            "transitioningMessage": null,
+            "transitioningProgress": null,
+            "type": "host",
+            "uuid": "2ffb766a-b006-41b5-913e-752e4551e43b"
+        },
+        {
+            "accountId": "1a23",
+            "actions": {
+                "deactivate": "http://127.0.0.1:8080/v2-beta/hosts/1h4/?action=deactivate",
+                "dockersocket": "http://127.0.0.1:8080/v2-beta/hosts/1h4/?action=dockersocket",
+                "update": "http://127.0.0.1:8080/v2-beta/hosts/1h4/?action=update"
+            },
+            "agentId": "1a15",
+            "agentIpAddress": "192.168.1.204",
+            "agentState": null,
+            "amazonec2Config": null,
+            "apiProxy": null,
+            "authCertificateAuthority": null,
+            "authKey": null,
+            "azureConfig": null,
+            "baseType": "host",
+            "computeTotal": 1000000,
+            "created": "2017-01-26T11:59:41Z",
+            "createdTS": 1485431981000,
+            "data": {
+                "fields": {
+                    "agentIpAddress": "192.168.1.204",
+                    "hostname": "docker05",
+                    "info": {
+                        "cpuInfo": {
+                            "count": 1,
+                            "cpuCoresPercentages": [
+                                0
+                            ],
+                            "loadAvg": [
+                                "0",
+                                "0.14",
+                                "0.22"
+                            ],
+                            "mhz": 2699.933,
+                            "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                        },
+                        "diskInfo": {
+                            "dockerStorageDriver": "devicemapper",
+                            "dockerStorageDriverStatus": {},
+                            "fileSystems": {
+                                "/dev/mapper/centos-root": {
+                                    "capacity": 8570
+                                },
+                                "/dev/mapper/docker-253:0-50506834-11f7c9bb40771658faefa5d03b46e8b4a64ea8fe11e4df50d51c90878e018cc3": {
+                                    "capacity": 10229
+                                }
+                            },
+                            "mountPoints": {
+                                "/dev/mapper/centos-root": {
+                                    "free": 6690,
+                                    "percentage": 21.931018450991832,
+                                    "total": 8570,
+                                    "used": 1879
+                                },
+                                "/dev/mapper/docker-253:0-50506834-11f7c9bb40771658faefa5d03b46e8b4a64ea8fe11e4df50d51c90878e018cc3": {
+                                    "free": 9976,
+                                    "percentage": 2.465913395737609,
+                                    "total": 10229,
+                                    "used": 252
+                                }
+                            }
+                        },
+                        "iopsInfo": {},
+                        "memoryInfo": {
+                            "active": 140,
+                            "buffers": 0,
+                            "cached": 180,
+                            "inactive": 176,
+                            "memAvailable": 186,
+                            "memFree": 57,
+                            "memTotal": 457,
+                            "swapCached": 4,
+                            "swapfree": 1011,
+                            "swaptotal": 1015
+                        },
+                        "osInfo": {
+                            "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                            "kernelVersion": "3.10.0",
+                            "operatingSystem": "CentOS Linux 7 (Core)"
+                        }
+                    },
+                    "labels": {
+                        "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                        "io.rancher.host.docker_version": "1.12",
+                        "io.rancher.host.linux_kernel_version": "3.10"
+                    },
+                    "physicalHostUuid": "f4c12812-2dbd-4212-5f96-dfe4d8a0386c",
+                    "publicEndpoints": [
+                        {
+                            "hostId": "4",
+                            "instanceId": "34",
+                            "ipAddress": "192.168.1.204",
+                            "port": 500,
+                            "serviceId": "20"
+                        },
+                        {
+                            "hostId": "4",
+                            "instanceId": "34",
+                            "ipAddress": "192.168.1.204",
+                            "port": 4500,
+                            "serviceId": "20"
+                        }
+                    ],
+                    "reportedUuid": "f2eb7125-5ab5-4930-4c4c-5e87649b0520",
+                    "systemContainer": "",
+                    "type": "host"
+                }
+            },
+            "description": null,
+            "digitaloceanConfig": null,
+            "dockerVersion": null,
+            "driver": null,
+            "engineEnv": null,
+            "engineInsecureRegistry": null,
+            "engineInstallUrl": null,
+            "engineLabel": null,
+            "engineOpt": null,
+            "engineRegistryMirror": null,
+            "engineStorageDriver": null,
+            "hostname": "docker05",
+            "id": "1h4",
+            "info": {
+                "cpuInfo": {
+                    "count": 1,
+                    "cpuCoresPercentages": [
+                        0
+                    ],
+                    "loadAvg": [
+                        "0",
+                        "0.14",
+                        "0.22"
+                    ],
+                    "mhz": 2699.933,
+                    "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                },
+                "diskInfo": {
+                    "dockerStorageDriver": "devicemapper",
+                    "dockerStorageDriverStatus": {},
+                    "fileSystems": {
+                        "/dev/mapper/centos-root": {
+                            "capacity": 8570
+                        },
+                        "/dev/mapper/docker-253:0-50506834-11f7c9bb40771658faefa5d03b46e8b4a64ea8fe11e4df50d51c90878e018cc3": {
+                            "capacity": 10229
+                        }
+                    },
+                    "mountPoints": {
+                        "/dev/mapper/centos-root": {
+                            "free": 6690,
+                            "percentage": 21.931018450991832,
+                            "total": 8570,
+                            "used": 1879
+                        },
+                        "/dev/mapper/docker-253:0-50506834-11f7c9bb40771658faefa5d03b46e8b4a64ea8fe11e4df50d51c90878e018cc3": {
+                            "free": 9976,
+                            "percentage": 2.465913395737609,
+                            "total": 10229,
+                            "used": 252
+                        }
+                    }
+                },
+                "iopsInfo": {},
+                "memoryInfo": {
+                    "active": 140,
+                    "buffers": 0,
+                    "cached": 180,
+                    "inactive": 176,
+                    "memAvailable": 186,
+                    "memFree": 57,
+                    "memTotal": 457,
+                    "swapCached": 4,
+                    "swapfree": 1011,
+                    "swaptotal": 1015
+                },
+                "osInfo": {
+                    "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                    "kernelVersion": "3.10.0",
+                    "operatingSystem": "CentOS Linux 7 (Core)"
+                }
+            },
+            "instanceIds": [
+                "1i30",
+                "1i31",
+                "1i32",
+                "1i33",
+                "1i34",
+                "1i35",
+                "1i36",
+                "1i37",
+                "1i40",
+                "1i41"
+            ],
+            "kind": "docker",
+            "labels": {
+                "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                "io.rancher.host.docker_version": "1.12",
+                "io.rancher.host.linux_kernel_version": "3.10"
+            },
+            "links": {
+                "account": "http://127.0.0.1:8080/v2-beta/hosts/1h4/account",
+                "agent": "http://127.0.0.1:8080/v2-beta/hosts/1h4/agent",
+                "clusters": "http://127.0.0.1:8080/v2-beta/hosts/1h4/clusters",
+                "configItemStatuses": "http://127.0.0.1:8080/v2-beta/hosts/1h4/configitemstatuses",
+                "containerEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h4/containerevents",
+                "containerStats": "http://127.0.0.1:8080/v2-beta/hosts/1h4/containerstats",
+                "healthcheckInstanceHostMaps": "http://127.0.0.1:8080/v2-beta/hosts/1h4/healthcheckinstancehostmaps",
+                "hostLabels": "http://127.0.0.1:8080/v2-beta/hosts/1h4/hostlabels",
+                "hostStats": "http://127.0.0.1:8080/v2-beta/hosts/1h4/hoststats",
+                "hosts": "http://127.0.0.1:8080/v2-beta/hosts/1h4/hosts",
+                "instances": "http://127.0.0.1:8080/v2-beta/hosts/1h4/instances",
+                "ipAddresses": "http://127.0.0.1:8080/v2-beta/hosts/1h4/ipaddresses",
+                "physicalHost": "http://127.0.0.1:8080/v2-beta/hosts/1h4/physicalhost",
+                "self": "http://127.0.0.1:8080/v2-beta/hosts/1h4",
+                "serviceEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h4/serviceevents",
+                "stats": "http://127.0.0.1:8080/v2-beta/hosts/1h4/stats",
+                "storagePools": "http://127.0.0.1:8080/v2-beta/hosts/1h4/storagepools",
+                "volumes": "http://127.0.0.1:8080/v2-beta/hosts/1h4/volumes"
+            },
+            "localStorageMb": 7384424,
+            "memory": 479199232,
+            "milliCpu": 1000,
+            "name": null,
+            "packetConfig": null,
+            "physicalHostId": "1ph4",
+            "publicEndpoints": [
+                {
+                    "hostId": "1h4",
+                    "instanceId": "1i34",
+                    "ipAddress": "192.168.1.204",
+                    "port": 500,
+                    "serviceId": "1s20",
+                    "type": "publicEndpoint"
+                },
+                {
+                    "hostId": "1h4",
+                    "instanceId": "1i34",
+                    "ipAddress": "192.168.1.204",
+                    "port": 4500,
+                    "serviceId": "1s20",
+                    "type": "publicEndpoint"
+                }
+            ],
+            "removeTime": null,
+            "removed": null,
+            "state": "active",
+            "transitioning": "no",
+            "transitioningMessage": null,
+            "transitioningProgress": null,
+            "type": "host",
+            "uuid": "6efc6bda-0d6b-4b9f-a26d-b5d39fe65ea4"
+        },
+        {
+            "accountId": "1a23",
+            "actions": {
+                "deactivate": "http://127.0.0.1:8080/v2-beta/hosts/1h5/?action=deactivate",
+                "dockersocket": "http://127.0.0.1:8080/v2-beta/hosts/1h5/?action=dockersocket",
+                "update": "http://127.0.0.1:8080/v2-beta/hosts/1h5/?action=update"
+            },
+            "agentId": "1a16",
+            "agentIpAddress": "192.168.1.205",
+            "agentState": null,
+            "amazonec2Config": null,
+            "apiProxy": null,
+            "authCertificateAuthority": null,
+            "authKey": null,
+            "azureConfig": null,
+            "baseType": "host",
+            "computeTotal": 1000000,
+            "created": "2017-01-26T11:59:42Z",
+            "createdTS": 1485431982000,
+            "data": {
+                "fields": {
+                    "agentIpAddress": "192.168.1.205",
+                    "hostname": "docker06",
+                    "info": {
+                        "cpuInfo": {
+                            "count": 1,
+                            "cpuCoresPercentages": [
+                                0
+                            ],
+                            "loadAvg": [
+                                "0",
+                                "0.11",
+                                "0.16"
+                            ],
+                            "mhz": 2700.165,
+                            "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                        },
+                        "diskInfo": {
+                            "dockerStorageDriver": "devicemapper",
+                            "dockerStorageDriverStatus": {},
+                            "fileSystems": {
+                                "/dev/mapper/centos-root": {
+                                    "capacity": 8570
+                                },
+                                "/dev/mapper/docker-253:0-50506834-a32c46e809a4b7723489e110e7f596effcc59773ac0c3049e0f7ed76cca3888d": {
+                                    "capacity": 10229
+                                }
+                            },
+                            "mountPoints": {
+                                "/dev/mapper/centos-root": {
+                                    "free": 6708,
+                                    "percentage": 21.717200262543756,
+                                    "total": 8570,
+                                    "used": 1861
+                                },
+                                "/dev/mapper/docker-253:0-50506834-a32c46e809a4b7723489e110e7f596effcc59773ac0c3049e0f7ed76cca3888d": {
+                                    "free": 9976,
+                                    "percentage": 2.465913395737609,
+                                    "total": 10229,
+                                    "used": 252
+                                }
+                            }
+                        },
+                        "iopsInfo": {},
+                        "memoryInfo": {
+                            "active": 144,
+                            "buffers": 0,
+                            "cached": 184,
+                            "inactive": 175,
+                            "memAvailable": 191,
+                            "memFree": 58,
+                            "memTotal": 457,
+                            "swapCached": 4,
+                            "swapfree": 1011,
+                            "swaptotal": 1015
+                        },
+                        "osInfo": {
+                            "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                            "kernelVersion": "3.10.0",
+                            "operatingSystem": "CentOS Linux 7 (Core)"
+                        }
+                    },
+                    "labels": {
+                        "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                        "io.rancher.host.docker_version": "1.12",
+                        "io.rancher.host.linux_kernel_version": "3.10"
+                    },
+                    "physicalHostUuid": "50e2c619-6377-497f-7b3c-b773e520fa6d",
+                    "publicEndpoints": [
+                        {
+                            "hostId": "5",
+                            "instanceId": "46",
+                            "ipAddress": "192.168.1.205",
+                            "port": 500,
+                            "serviceId": "20"
+                        },
+                        {
+                            "hostId": "5",
+                            "instanceId": "46",
+                            "ipAddress": "192.168.1.205",
+                            "port": 4500,
+                            "serviceId": "20"
+                        }
+                    ],
+                    "reportedUuid": "01506016-0752-4c6e-592f-cd47d5a94c44",
+                    "systemContainer": "",
+                    "type": "host"
+                }
+            },
+            "description": null,
+            "digitaloceanConfig": null,
+            "dockerVersion": null,
+            "driver": null,
+            "engineEnv": null,
+            "engineInsecureRegistry": null,
+            "engineInstallUrl": null,
+            "engineLabel": null,
+            "engineOpt": null,
+            "engineRegistryMirror": null,
+            "engineStorageDriver": null,
+            "hostname": "docker06",
+            "id": "1h5",
+            "info": {
+                "cpuInfo": {
+                    "count": 1,
+                    "cpuCoresPercentages": [
+                        0
+                    ],
+                    "loadAvg": [
+                        "0",
+                        "0.11",
+                        "0.16"
+                    ],
+                    "mhz": 2700.165,
+                    "modelName": "Intel(R) Core(TM) i5-5257U CPU @ 2.70GHz"
+                },
+                "diskInfo": {
+                    "dockerStorageDriver": "devicemapper",
+                    "dockerStorageDriverStatus": {},
+                    "fileSystems": {
+                        "/dev/mapper/centos-root": {
+                            "capacity": 8570
+                        },
+                        "/dev/mapper/docker-253:0-50506834-a32c46e809a4b7723489e110e7f596effcc59773ac0c3049e0f7ed76cca3888d": {
+                            "capacity": 10229
+                        }
+                    },
+                    "mountPoints": {
+                        "/dev/mapper/centos-root": {
+                            "free": 6708,
+                            "percentage": 21.717200262543756,
+                            "total": 8570,
+                            "used": 1861
+                        },
+                        "/dev/mapper/docker-253:0-50506834-a32c46e809a4b7723489e110e7f596effcc59773ac0c3049e0f7ed76cca3888d": {
+                            "free": 9976,
+                            "percentage": 2.465913395737609,
+                            "total": 10229,
+                            "used": 252
+                        }
+                    }
+                },
+                "iopsInfo": {},
+                "memoryInfo": {
+                    "active": 144,
+                    "buffers": 0,
+                    "cached": 184,
+                    "inactive": 175,
+                    "memAvailable": 191,
+                    "memFree": 58,
+                    "memTotal": 457,
+                    "swapCached": 4,
+                    "swapfree": 1011,
+                    "swaptotal": 1015
+                },
+                "osInfo": {
+                    "dockerVersion": "Docker version 1.12.5, build 047e51b/1.12.5",
+                    "kernelVersion": "3.10.0",
+                    "operatingSystem": "CentOS Linux 7 (Core)"
+                }
+            },
+            "instanceIds": [
+                "1i38",
+                "1i39",
+                "1i42",
+                "1i43",
+                "1i44",
+                "1i45",
+                "1i46",
+                "1i47",
+                "1i48"
+            ],
+            "kind": "docker",
+            "labels": {
+                "io.rancher.host.agent_image": "rancher/agent:v1.1.3",
+                "io.rancher.host.docker_version": "1.12",
+                "io.rancher.host.linux_kernel_version": "3.10"
+            },
+            "links": {
+                "account": "http://127.0.0.1:8080/v2-beta/hosts/1h5/account",
+                "agent": "http://127.0.0.1:8080/v2-beta/hosts/1h5/agent",
+                "clusters": "http://127.0.0.1:8080/v2-beta/hosts/1h5/clusters",
+                "configItemStatuses": "http://127.0.0.1:8080/v2-beta/hosts/1h5/configitemstatuses",
+                "containerEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h5/containerevents",
+                "containerStats": "http://127.0.0.1:8080/v2-beta/hosts/1h5/containerstats",
+                "healthcheckInstanceHostMaps": "http://127.0.0.1:8080/v2-beta/hosts/1h5/healthcheckinstancehostmaps",
+                "hostLabels": "http://127.0.0.1:8080/v2-beta/hosts/1h5/hostlabels",
+                "hostStats": "http://127.0.0.1:8080/v2-beta/hosts/1h5/hoststats",
+                "hosts": "http://127.0.0.1:8080/v2-beta/hosts/1h5/hosts",
+                "instances": "http://127.0.0.1:8080/v2-beta/hosts/1h5/instances",
+                "ipAddresses": "http://127.0.0.1:8080/v2-beta/hosts/1h5/ipaddresses",
+                "physicalHost": "http://127.0.0.1:8080/v2-beta/hosts/1h5/physicalhost",
+                "self": "http://127.0.0.1:8080/v2-beta/hosts/1h5",
+                "serviceEvents": "http://127.0.0.1:8080/v2-beta/hosts/1h5/serviceevents",
+                "stats": "http://127.0.0.1:8080/v2-beta/hosts/1h5/stats",
+                "storagePools": "http://127.0.0.1:8080/v2-beta/hosts/1h5/storagepools",
+                "volumes": "http://127.0.0.1:8080/v2-beta/hosts/1h5/volumes"
+            },
+            "localStorageMb": 7384535,
+            "memory": 479199232,
+            "milliCpu": 1000,
+            "name": null,
+            "packetConfig": null,
+            "physicalHostId": "1ph5",
+            "publicEndpoints": [
+                {
+                    "hostId": "1h5",
+                    "instanceId": "1i46",
+                    "ipAddress": "192.168.1.205",
+                    "port": 500,
+                    "serviceId": "1s20",
+                    "type": "publicEndpoint"
+                },
+                {
+                    "hostId": "1h5",
+                    "instanceId": "1i46",
+                    "ipAddress": "192.168.1.205",
+                    "port": 4500,
+                    "serviceId": "1s20",
+                    "type": "publicEndpoint"
+                }
+            ],
+            "removeTime": null,
+            "removed": null,
+            "state": "active",
+            "transitioning": "no",
+            "transitioningMessage": null,
+            "transitioningProgress": null,
+            "type": "host",
+            "uuid": "9afd694c-67bd-4830-b830-a1dda2e5ff60"
+        }
+    ],
+    "filters": {
+        "accountId": null,
+        "agentId": null,
+        "agentState": null,
+        "computeFree": null,
+        "computeTotal": null,
+        "created": null,
+        "description": null,
+        "id": null,
+        "isPublic": null,
+        "kind": null,
+        "localStorageMb": null,
+        "memory": null,
+        "milliCpu": null,
+        "name": null,
+        "physicalHostId": null,
+        "removeTime": null,
+        "removed": null,
+        "state": null,
+        "uri": null,
+        "uuid": null
+    },
+    "links": {
+        "self": "http://127.0.0.1:8080/v2-beta/hosts"
+    },
+    "pagination": {
+        "first": null,
+        "limit": 100,
+        "next": null,
+        "partial": false,
+        "previous": null,
+        "total": null
+    },
+    "resourceType": "host",
+    "sort": null,
+    "sortLinks": {
+        "accountId": "http://127.0.0.1:8080/v2-beta/hosts?sort=accountId",
+        "agentId": "http://127.0.0.1:8080/v2-beta/hosts?sort=agentId",
+        "agentState": "http://127.0.0.1:8080/v2-beta/hosts?sort=agentState",
+        "computeFree": "http://127.0.0.1:8080/v2-beta/hosts?sort=computeFree",
+        "computeTotal": "http://127.0.0.1:8080/v2-beta/hosts?sort=computeTotal",
+        "created": "http://127.0.0.1:8080/v2-beta/hosts?sort=created",
+        "description": "http://127.0.0.1:8080/v2-beta/hosts?sort=description",
+        "id": "http://127.0.0.1:8080/v2-beta/hosts?sort=id",
+        "isPublic": "http://127.0.0.1:8080/v2-beta/hosts?sort=isPublic",
+        "kind": "http://127.0.0.1:8080/v2-beta/hosts?sort=kind",
+        "localStorageMb": "http://127.0.0.1:8080/v2-beta/hosts?sort=localStorageMb",
+        "memory": "http://127.0.0.1:8080/v2-beta/hosts?sort=memory",
+        "milliCpu": "http://127.0.0.1:8080/v2-beta/hosts?sort=milliCpu",
+        "name": "http://127.0.0.1:8080/v2-beta/hosts?sort=name",
+        "physicalHostId": "http://127.0.0.1:8080/v2-beta/hosts?sort=physicalHostId",
+        "removeTime": "http://127.0.0.1:8080/v2-beta/hosts?sort=removeTime",
+        "removed": "http://127.0.0.1:8080/v2-beta/hosts?sort=removed",
+        "state": "http://127.0.0.1:8080/v2-beta/hosts?sort=state",
+        "uri": "http://127.0.0.1:8080/v2-beta/hosts?sort=uri",
+        "uuid": "http://127.0.0.1:8080/v2-beta/hosts?sort=uuid"
+    },
+    "type": "collection"
+}
