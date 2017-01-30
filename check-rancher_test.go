@@ -17,7 +17,8 @@ import (
 
 var testcase string
 
-func getClient(t string) (rancher *client.RancherClient, err error) {
+func getClient(t string) (ccc *CheckClientConfig, err error) {
+
 	testcase = t
 
 	router := mux.NewRouter().StrictSlash(true)
@@ -27,11 +28,19 @@ func getClient(t string) (rancher *client.RancherClient, err error) {
 		manners.ListenAndServe("127.0.0.1:8080", router)
 	}()
 
-	rancher, err = client.NewRancherClient(&client.ClientOpts{
+	rancher, err := client.NewRancherClient(&client.ClientOpts{
 		Url:       "http://127.0.0.1:8080",
 		AccessKey: "blah",
 		SecretKey: "bleh",
 		Timeout:   5 * time.Second})
+
+	if err != nil {
+		panic(err)
+	}
+	ccc = new(CheckClientConfig)
+	ccc.rancher = rancher
+
+	setupCheck(ccc)
 
 	return
 }
@@ -65,179 +74,110 @@ func api(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func TestGetClient(t *testing.T) {
-	assert := assert.New(t)
-
-	rancher, err := getClient("common")
-	defer done()
+func initTest(testcase string) (ccc *CheckClientConfig) {
+	ccc, err := getClient(testcase)
 
 	if err != nil {
-		assert.Nil(err, fmt.Sprintf("could not create rancher instance: %s", err.Error()))
+		panic(fmt.Sprintf("could not create client: %s", err.Error()))
 	}
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	if ccc.rancher == nil {
+		panic("could not create rancher client")
+	}
+
+	if ccc == nil {
+		panic("could not create client configuration")
+	}
+
+	return
 }
 
 func TestEnvironmentsOk(t *testing.T) {
-	assert := assert.New(t)
-
-	rancher, err := getClient("EnvironmentsOk")
+	ccc := initTest("EnvironmentsOk")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
-
-	if rancher != nil {
-		exitCode, _ := checkEnvironments(rancher)
-
-		assert.Equal(0, exitCode)
-	}
+	exitCode, _ := checkEnvironments(ccc)
+	assert.Equal(t, 0, exitCode)
 }
 
 func TestEnvironmentsBroken(t *testing.T) {
-	assert := assert.New(t)
-
-	rancher, err := getClient("EnvironmentsBroken")
+	ccc := initTest("EnvironmentsBroken")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	exitCode, alarm := checkEnvironments(ccc)
 
-	if rancher != nil {
-		exitCode, alarm := checkEnvironments(rancher)
-
-		assert.Equal(2, exitCode)
-		assert.Regexp("env emptyenvironment.*unhealthy", alarm)
-	}
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "env emptyenvironment.*unhealthy", alarm)
 
 }
 
 func TestHostsOk(t *testing.T) {
-	assert := assert.New(t)
-
-	setupCheck()
-	rancher, err := getClient("HostsOk")
+	ccc := initTest("HostsOk")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	exitCode, _ := checkHosts(ccc)
 
-	if rancher != nil {
-		exitCode, _ := checkHosts(rancher)
-
-		assert.Equal(0, exitCode)
-	}
+	assert.Equal(t, 0, exitCode)
 }
 
 func TestHostsOkTwoEnvs(t *testing.T) {
-	assert := assert.New(t)
-
-	setupCheck()
-	rancher, err := getClient("HostsOkTwoEnvs")
+	ccc := initTest("HostsOkTwoEnvs")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	exitCode, _ := checkHosts(ccc)
 
-	if rancher != nil {
-		exitCode, _ := checkHosts(rancher)
-
-		assert.Equal(0, exitCode)
-	}
+	assert.Equal(t, 0, exitCode)
 }
 
 func TestHostsNotOkTwoEnvsNotGrouped(t *testing.T) {
-	assert := assert.New(t)
-
-	setupCheck()
-	rancher, err := getClient("HostsNotOkTwoEnvs")
+	ccc := initTest("HostsNotOkTwoEnvs")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	exitCode, alarm := checkHosts(ccc)
 
-	if rancher != nil {
-		exitCode, alarm := checkHosts(rancher)
-
-		assert.Equal(1, exitCode)
-		assert.Regexp("docker02.*inactive", alarm)
-		assert.Regexp("docker03.*inactive", alarm)
-	}
+	assert.Equal(t, 1, exitCode)
+	assert.Regexp(t, "docker02.*inactive", alarm)
+	assert.Regexp(t, "docker03.*inactive", alarm)
 }
 
 func TestHostsNotOkTwoEnvsGrouped(t *testing.T) {
-	assert := assert.New(t)
-
-	setupCheck()
-	groupMode = true
-	rancher, err := getClient("HostsNotOkTwoEnvs")
+	ccc := initTest("HostsNotOkTwoEnvs")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	ccc.groupMode = true
+	exitCode, alarm := checkHosts(ccc)
 
-	if rancher != nil {
-		exitCode, alarm := checkHosts(rancher)
-
-		assert.Equal(2, exitCode)
-		assert.Regexp("docker02.*inactive", alarm)
-		assert.Regexp("docker03.*inactive", alarm)
-		assert.Regexp("Default: 1 of 3", alarm)
-	}
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "docker02.*inactive", alarm)
+	assert.Regexp(t, "docker03.*inactive", alarm)
+	assert.Regexp(t, "Default: 1 of 3", alarm)
 }
 
-
 func TestStacksOk(t *testing.T) {
-	assert := assert.New(t)
-
-	setupCheck()
-	rancher, err := getClient("StacksOk")
+	ccc := initTest("StacksOk")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	exitCode, _ := checkStacks(ccc)
 
-	if rancher != nil {
-		exitCode, _ := checkStacks(rancher)
-
-		assert.Equal(0, exitCode)
-	}
+	assert.Equal(t, 0, exitCode)
 }
 
 func TestStacksDegraded(t *testing.T) {
-	assert := assert.New(t)
-
-	setupCheck()
-	rancher, err := getClient("StacksDegraded")
+	ccc := initTest("StacksDegraded")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	exitCode, alarm := checkStacks(ccc)
 
-	if rancher != nil {
-		exitCode, alarm := checkStacks(rancher)
-
-		assert.Equal(2, exitCode)
-		assert.Regexp("worlddominationapp.*Default.*degraded", alarm)
-	}
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "worlddominationapp.*Default.*degraded", alarm)
 }
 
 func TestStacksHealthcheckFailing(t *testing.T) {
-	assert := assert.New(t)
-
-	setupCheck()
-	rancher, err := getClient("StacksHealthcheckFailing")
+	ccc := initTest("StacksHealthcheckFailing")
 	defer done()
 
-	assert.Nil(err)
-	assert.NotNil(rancher, "we were supposed to get a rancher client")
+	exitCode, alarm := checkStacks(ccc)
 
-	if rancher != nil {
-		exitCode, alarm := checkStacks(rancher)
-
-		assert.Equal(2, exitCode)
-		assert.Regexp("worlddominationapp.*Default.*degraded", alarm)
-	}
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "worlddominationapp.*Default.*degraded", alarm)
 }
-
