@@ -1,0 +1,60 @@
+{
+    "accountId": "1a23",
+    "actions": {
+        "activateservices": "http://127.0.0.1:8080/v2-beta/stacks/1st13/?action=activateservices",
+        "addoutputs": "http://127.0.0.1:8080/v2-beta/stacks/1st13/?action=addoutputs",
+        "deactivateservices": "http://127.0.0.1:8080/v2-beta/stacks/1st13/?action=deactivateservices",
+        "exportconfig": "http://127.0.0.1:8080/v2-beta/stacks/1st13/?action=exportconfig",
+        "remove": "http://127.0.0.1:8080/v2-beta/stacks/1st13/?action=remove",
+        "update": "http://127.0.0.1:8080/v2-beta/stacks/1st13/?action=update",
+        "upgrade": "http://127.0.0.1:8080/v2-beta/stacks/1st13/?action=upgrade"
+    },
+    "baseType": "stack",
+    "binding": null,
+    "created": "2017-01-26T11:56:39Z",
+    "createdTS": 1485431799000,
+    "data": {
+        "fields": {
+            "binding": null,
+            "dockerCompose": "version: '2'\nservices:\n  healthcheck:\n    labels:\n      io.rancher.container.create_agent: 'true'\n      io.rancher.scheduler.global: 'true'\n    image: rancher/healthcheck:v0.2.0\n    logging:\n      driver: json-file\n      options:\n        max-size: 25m\n        max-file: '2'\n",
+            "environment": null,
+            "rancherCompose": ".catalog:\n    name: \"Healthcheck Service\"\n    version: \"v0.2.0\"\n    description: \"Rancher healthcheck service\"\nhealthcheck:\n  health_check:\n      port: 42\n      interval: 2000\n      response_timeout: 2000\n      unhealthy_threshold: 3\n      healthy_threshold: 2\n",
+            "transitioningMessage": "Creating stack"
+        }
+    },
+    "description": null,
+    "dockerCompose": "version: '2'\nservices:\n  healthcheck:\n    labels:\n      io.rancher.container.create_agent: 'true'\n      io.rancher.scheduler.global: 'true'\n    image: rancher/healthcheck:v0.2.0\n    logging:\n      driver: json-file\n      options:\n        max-size: 25m\n        max-file: '2'\n",
+    "environment": null,
+    "externalId": "catalog://library:infra*healthcheck:1",
+    "group": null,
+    "healthState": "healthy",
+    "id": "1st13",
+    "kind": "stack",
+    "links": {
+        "account": "http://127.0.0.1:8080/v2-beta/stacks/1st13/account",
+        "composeConfig": "http://127.0.0.1:8080/v2-beta/stacks/1st13/composeconfig",
+        "configItemStatuses": "http://127.0.0.1:8080/v2-beta/stacks/1st13/configitemstatuses",
+        "self": "http://127.0.0.1:8080/v2-beta/stacks/1st13",
+        "services": "http://127.0.0.1:8080/v2-beta/stacks/1st13/services",
+        "volumeTemplates": "http://127.0.0.1:8080/v2-beta/stacks/1st13/volumetemplates",
+        "volumes": "http://127.0.0.1:8080/v2-beta/stacks/1st13/volumes"
+    },
+    "name": "healthcheck",
+    "outputs": null,
+    "previousEnvironment": null,
+    "previousExternalId": null,
+    "rancherCompose": ".catalog:\n    name: \"Healthcheck Service\"\n    version: \"v0.2.0\"\n    description: \"Rancher healthcheck service\"\nhealthcheck:\n  health_check:\n      port: 42\n      interval: 2000\n      response_timeout: 2000\n      unhealthy_threshold: 3\n      healthy_threshold: 2\n",
+    "removeTime": null,
+    "removed": null,
+    "serviceIds": [
+        "1s17"
+    ],
+    "startOnCreate": null,
+    "state": "active",
+    "system": true,
+    "transitioning": "no",
+    "transitioningMessage": null,
+    "transitioningProgress": null,
+    "type": "stack",
+    "uuid": "a1067f03-713c-446d-90bf-b493e0d14e1b"
+}

@@ -1,0 +1,60 @@
+{
+    "accountId": "1a5",
+    "actions": {
+        "activateservices": "http://127.0.0.1:8080/v2-beta/stacks/1st2/?action=activateservices",
+        "addoutputs": "http://127.0.0.1:8080/v2-beta/stacks/1st2/?action=addoutputs",
+        "deactivateservices": "http://127.0.0.1:8080/v2-beta/stacks/1st2/?action=deactivateservices",
+        "exportconfig": "http://127.0.0.1:8080/v2-beta/stacks/1st2/?action=exportconfig",
+        "remove": "http://127.0.0.1:8080/v2-beta/stacks/1st2/?action=remove",
+        "update": "http://127.0.0.1:8080/v2-beta/stacks/1st2/?action=update",
+        "upgrade": "http://127.0.0.1:8080/v2-beta/stacks/1st2/?action=upgrade"
+    },
+    "baseType": "stack",
+    "binding": null,
+    "created": "2017-01-26T08:44:36Z",
+    "createdTS": 1485420276000,
+    "data": {
+        "fields": {
+            "binding": null,
+            "dockerCompose": "version: '2'\nservices:\n  scheduler:\n    image: rancher/scheduler:v0.5.1\n    command: scheduler\n    labels:\n        io.rancher.container.create_agent: \"true\"\n        io.rancher.container.agent_service.scheduling: \"true\"\n    logging:\n      driver: json-file\n      options:\n        max-size: 25m\n        max-file: '2'\n",
+            "environment": null,
+            "rancherCompose": ".catalog:\n    name: Scheduler\n    description: A resource based scheduler plugin for Rancher.\n    version: v0.3.0\n    minimum_rancher_version: v1.1.999\n\nscheduler:\n    health_check:\n        request_line: GET /healthcheck HTTP/1.0\n        port: 80\n        interval: 2000\n        response_timeout: 2000\n        unhealthy_threshold: 3\n        healthy_threshold: 2\n",
+            "transitioningMessage": "Creating stack"
+        }
+    },
+    "description": null,
+    "dockerCompose": "version: '2'\nservices:\n  scheduler:\n    image: rancher/scheduler:v0.5.1\n    command: scheduler\n    labels:\n        io.rancher.container.create_agent: \"true\"\n        io.rancher.container.agent_service.scheduling: \"true\"\n    logging:\n      driver: json-file\n      options:\n        max-size: 25m\n        max-file: '2'\n",
+    "environment": null,
+    "externalId": "catalog://library:infra*scheduler:2",
+    "group": null,
+    "healthState": "healthy",
+    "id": "1st2",
+    "kind": "stack",
+    "links": {
+        "account": "http://127.0.0.1:8080/v2-beta/stacks/1st2/account",
+        "composeConfig": "http://127.0.0.1:8080/v2-beta/stacks/1st2/composeconfig",
+        "configItemStatuses": "http://127.0.0.1:8080/v2-beta/stacks/1st2/configitemstatuses",
+        "self": "http://127.0.0.1:8080/v2-beta/stacks/1st2",
+        "services": "http://127.0.0.1:8080/v2-beta/stacks/1st2/services",
+        "volumeTemplates": "http://127.0.0.1:8080/v2-beta/stacks/1st2/volumetemplates",
+        "volumes": "http://127.0.0.1:8080/v2-beta/stacks/1st2/volumes"
+    },
+    "name": "scheduler",
+    "outputs": null,
+    "previousEnvironment": null,
+    "previousExternalId": null,
+    "rancherCompose": ".catalog:\n    name: Scheduler\n    description: A resource based scheduler plugin for Rancher.\n    version: v0.3.0\n    minimum_rancher_version: v1.1.999\n\nscheduler:\n    health_check:\n        request_line: GET /healthcheck HTTP/1.0\n        port: 80\n        interval: 2000\n        response_timeout: 2000\n        unhealthy_threshold: 3\n        healthy_threshold: 2\n",
+    "removeTime": null,
+    "removed": null,
+    "serviceIds": [
+        "1s3"
+    ],
+    "startOnCreate": null,
+    "state": "active",
+    "system": true,
+    "transitioning": "no",
+    "transitioningMessage": null,
+    "transitioningProgress": null,
+    "type": "stack",
+    "uuid": "896d7f2d-91d0-467e-add2-946804157145"
+}

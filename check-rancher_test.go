@@ -54,7 +54,9 @@ func api(w http.ResponseWriter, r *http.Request) {
 	var filename string
 
 	if path == "" {
-		// fmt.Printf("%s \"%s\" (%s) => (returning empty answer with schemas header)\n", r.Method, path, r.URL)
+		if os.Getenv("CHECK_RANCHER_REQUESTLOG") != "" {
+			fmt.Printf("%s \"%s\" (%s) => (returning empty answer with schemas header)\n", r.Method, path, r.URL)
+		}
 		w.Header().Add("X-Api-Schemas", "http://127.0.0.1:8080/v2-beta/schemas")
 		w.WriteHeader(http.StatusOK)
 	} else {
@@ -67,7 +69,9 @@ func api(w http.ResponseWriter, r *http.Request) {
 			panic(path + " not found in common and " + testcase)
 		}
 
-		// fmt.Printf("%s \"%s\" (%s) => %s\n", r.Method, path, r.URL, filename)
+		if os.Getenv("CHECK_RANCHER_REQUESTLOG") != "" {
+			fmt.Printf("%s \"%s\" (%s) => %s\n", r.Method, path, r.URL, filename)
+		}
 
 		w.Header().Add("X-Api-Schemas", "http://127.0.0.1:8080/v2-beta/schemas")
 		http.ServeFile(w, r, filename)
@@ -90,6 +94,54 @@ func initTest(testcase string) (ccc *CheckClientConfig) {
 	}
 
 	return
+}
+
+func TestIncExcludes(t *testing.T) {
+	assert.Equal(t, map[string]string{},
+		parseIncExcludes(""))
+	assert.Equal(t, map[string]string{"monitorme": "true"},
+		parseIncExcludes("monitorme=true"))
+	assert.Equal(t, map[string]string{"monitorme": "true", "monitormeaswell": "yes"},
+		parseIncExcludes("monitorme=true,monitormeaswell=yes"))
+}
+
+func TestFilterLabels(t *testing.T) {
+	var ccc CheckClientConfig
+
+	ccc = CheckClientConfig{
+		include: map[string]string{"monitorme": "true"},
+		exclude: map[string]string{}}
+
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"monitorme": "true"}))
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"monitorme": "true", "rancher.something.something": 17}))
+	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"help": "me", "rancher.something": "else"}))
+
+	ccc = CheckClientConfig{
+		include: map[string]string{"monitorme": "true", "and": "me"},
+		exclude: map[string]string{}}
+
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"monitorme": "true"}))
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"monitorme": "true", "rancher.something.something": 17}))
+	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"help": "me", "rancher.something": "else"}))
+
+	ccc = CheckClientConfig{
+		include: map[string]string{},
+		exclude: map[string]string{"ignoreme": "true"}}
+
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"some": "label"}))
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"some": "label", "more": "labels"}))
+	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"ignoreme": "true"}))
+	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"ignoreme": "true", "or": "not"}))
+
+	ccc = CheckClientConfig{
+		include: map[string]string{},
+		exclude: map[string]string{"ignoreme": "true", "and": "me"}}
+
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"some": "label"}))
+	assert.Equal(t, true, filterLabels(&ccc, map[string]interface{}{"some": "label", "more": "labels"}))
+	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"ignoreme": "true"}))
+	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"ignoreme": "true", "or": "not"}))
+
 }
 
 func TestEnvironmentsOk(t *testing.T) {
@@ -180,4 +232,46 @@ func TestStacksHealthcheckFailing(t *testing.T) {
 
 	assert.Equal(t, 2, exitCode)
 	assert.Regexp(t, "worlddominationapp.*Default.*degraded", alarm)
+}
+
+func TestServicesOk(t *testing.T) {
+	ccc := initTest("ServicesOk")
+	defer done()
+
+	exitCode, _ := checkServices(ccc)
+
+	assert.Equal(t, 0, exitCode)
+}
+
+func TestServicesBrokenWithoutLabels(t *testing.T) {
+	ccc := initTest("ServicesBroken")
+	defer done()
+
+	exitCode, alarm := checkServices(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "donotmonitorme/broken", alarm)
+	assert.Regexp(t, "monitorme/nothingeverworks", alarm)
+}
+
+func TestServicesBrokenWithInclude(t *testing.T) {
+	ccc := initTest("ServicesBroken")
+	ccc.include = map[string]string{"monitor": "true"}
+	defer done()
+
+	exitCode, alarm := checkServices(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "monitorme/nothingeverworks", alarm)
+}
+
+func TestServicesBrokenWithExclude(t *testing.T) {
+	ccc := initTest("ServicesBroken")
+	ccc.exclude = map[string]string{"monitor": "false"}
+	defer done()
+
+	exitCode, alarm := checkServices(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "monitorme/nothingeverworks", alarm)
 }

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/rancher/go-rancher/v2"
@@ -20,6 +21,8 @@ type CheckClientConfig struct {
 	debugMode, verboseMode, groupMode bool
 	warning, critical                 float64
 	rancher                           *client.RancherClient
+	include, exclude                  map[string]string
+	includeSystem                     bool
 }
 
 func main() {
@@ -39,7 +42,8 @@ func main() {
 	flag.StringVar(&warningPercent, "w", "100%", "warning if less that many percent of resources are available")
 	flag.StringVar(&criticalPercent, "c", "50%", "critical if less that many percent of resources are available")
 	flag.StringVar(&includeStr, "i", "", "monitor items with these labels (ignore rest)")
-	flag.StringVar(&excludeStr, "e", "", "do not monitor items with these labels (monitor rest)")
+	flag.StringVar(&excludeStr, "e", "", "do not monitor items with these labels (monitor rest). Using both -i and -e is undefined")
+	flag.BoolVar(&ccc.includeSystem, "system", false, "system stacks only / include system services")
 
 	flag.Parse()
 
@@ -68,6 +72,9 @@ func main() {
 	} else {
 		ccc.critical = 0
 	}
+
+	ccc.include = parseIncExcludes(includeStr)
+	ccc.exclude = parseIncExcludes(excludeStr)
 
 	args := flag.Args()
 
@@ -135,6 +142,42 @@ func setupCheck(ccc *CheckClientConfig) {
 
 	environmentCache = make(map[string]*client.Project)
 	stackCache = make(map[string]*client.Stack)
+}
+
+func parseIncExcludes(inc string) map[string]string {
+	i := make(map[string]string)
+
+	if len(inc) < 1 {
+		return i
+	}
+
+	for _, p := range strings.Split(inc, ",") {
+		a := strings.Split(p, "=")
+		if len(a) == 2 {
+			i[a[0]] = a[1]
+		}
+	}
+
+	return i
+}
+
+func filterLabels(ccc *CheckClientConfig, labels map[string]interface{}) bool {
+	if len(ccc.include) > 0 {
+		for l, v := range labels {
+			if ccc.include[l] == v {
+				return true
+			}
+		}
+		return false
+	} else if len(ccc.exclude) > 0 {
+		for l, v := range labels {
+			if ccc.exclude[l] == v {
+				return false
+			}
+		}
+	}
+	return true
+
 }
 
 func usage() {
@@ -209,7 +252,7 @@ func checkEnvironments(ccc *CheckClientConfig) (e int, alarm string) {
 
 func checkHosts(ccc *CheckClientConfig) (e int, alarm string) {
 	rancher := ccc.rancher
-	
+
 	hosts, err := rancher.Host.List(nil)
 	if err != nil {
 		panic(err)
@@ -226,7 +269,7 @@ func checkHosts(ccc *CheckClientConfig) (e int, alarm string) {
 		groups[environ.Name] = append(groups[environ.Name], host)
 
 		if ccc.verboseMode {
-			fmt.Printf("%s(%s) in env %s is %s\n", host.Hostname, host.AgentIpAddress, environ.Name, host.State)
+			fmt.Printf("%s(%s) in env %s is %s %s\n", host.Hostname, host.AgentIpAddress, environ.Name, host.State, host.Labels)
 		}
 	}
 
@@ -297,7 +340,7 @@ func checkStacks(ccc *CheckClientConfig) (e int, alarm string) {
 			fmt.Printf("%s in env %s is %s/%s\n", stack.Name, env.Name, stack.State, stack.HealthState)
 		}
 
-		if stack.State != "active" || stack.HealthState != "healthy" {
+		if stack.State != "active" || stack.HealthState != "healthy" && (ccc.includeSystem == false || stack.System) {
 			alarm = alarm + fmt.Sprintf("%s in env %s (%s/%s) ", stack.Name, env.Name, stack.State, stack.HealthState)
 			e = 2
 		}
@@ -324,8 +367,20 @@ func checkServices(ccc *CheckClientConfig) (e int, alarm string) {
 			panic(err)
 		}
 
+		monitor := filterLabels(ccc, service.LaunchConfig.Labels)
+
+		if ccc.includeSystem && service.System {
+			monitor = true
+		}
+
 		if ccc.verboseMode {
-			fmt.Printf("env=%s, stack=%s, currentscale=%d health=%s, name=%s, scale=%d, stackid=%s, state=%s, transition=%s, transitionmessage=%s, transitioningprogress=%d\n", env.Name, stack.Name, service.CurrentScale, service.HealthState, service.Name, service.Scale, service.StackId, service.State, service.Transitioning, service.TransitioningMessage, service.TransitioningProgress)
+			fmt.Printf("env=%s, stack=%s, currentscale=%d health=%s, name=%s, scale=%d, stackid=%s, state=%s, transition=%s, transitionmessage=%s, transitioningprogress=%d, labels=%s, system=%t, monitor=%t\n",
+				env.Name, stack.Name, service.CurrentScale, service.HealthState, service.Name, service.Scale, service.StackId, service.State, service.Transitioning, service.TransitioningMessage, service.TransitioningProgress, service.LaunchConfig.Labels, service.System, monitor)
+		}
+
+		if monitor && service.HealthState != "healthy" {
+			alarm = alarm + fmt.Sprintf("%s/%s in env %s is %s ", stack.Name, service.Name, env.Name, service.HealthState)
+			e = 2
 		}
 	}
 

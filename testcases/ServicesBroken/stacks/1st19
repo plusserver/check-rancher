@@ -1,0 +1,57 @@
+{
+    "accountId": "1a5",
+    "actions": {
+        "activateservices": "http://127.0.0.1:8080/v2-beta/stacks/1st19/?action=activateservices",
+        "addoutputs": "http://127.0.0.1:8080/v2-beta/stacks/1st19/?action=addoutputs",
+        "deactivateservices": "http://127.0.0.1:8080/v2-beta/stacks/1st19/?action=deactivateservices",
+        "exportconfig": "http://127.0.0.1:8080/v2-beta/stacks/1st19/?action=exportconfig",
+        "remove": "http://127.0.0.1:8080/v2-beta/stacks/1st19/?action=remove",
+        "update": "http://127.0.0.1:8080/v2-beta/stacks/1st19/?action=update",
+        "upgrade": "http://127.0.0.1:8080/v2-beta/stacks/1st19/?action=upgrade"
+    },
+    "baseType": "stack",
+    "binding": null,
+    "created": "2017-01-27T09:13:25Z",
+    "createdTS": 1485508405000,
+    "data": {
+        "fields": {
+            "previousExternalId": null,
+            "startOnCreate": true
+        }
+    },
+    "description": null,
+    "dockerCompose": null,
+    "environment": null,
+    "externalId": "",
+    "group": null,
+    "healthState": "healthy",
+    "id": "1st19",
+    "kind": "stack",
+    "links": {
+        "account": "http://127.0.0.1:8080/v2-beta/stacks/1st19/account",
+        "composeConfig": "http://127.0.0.1:8080/v2-beta/stacks/1st19/composeconfig",
+        "configItemStatuses": "http://127.0.0.1:8080/v2-beta/stacks/1st19/configitemstatuses",
+        "self": "http://127.0.0.1:8080/v2-beta/stacks/1st19",
+        "services": "http://127.0.0.1:8080/v2-beta/stacks/1st19/services",
+        "volumeTemplates": "http://127.0.0.1:8080/v2-beta/stacks/1st19/volumetemplates",
+        "volumes": "http://127.0.0.1:8080/v2-beta/stacks/1st19/volumes"
+    },
+    "name": "monitormetoo",
+    "outputs": null,
+    "previousEnvironment": null,
+    "previousExternalId": null,
+    "rancherCompose": null,
+    "removeTime": null,
+    "removed": null,
+    "serviceIds": [
+        "1s24"
+    ],
+    "startOnCreate": true,
+    "state": "active",
+    "system": false,
+    "transitioning": "no",
+    "transitioningMessage": null,
+    "transitioningProgress": null,
+    "type": "stack",
+    "uuid": "7d528aff-6cb6-4609-86d1-a70e6975ebf4"
+}
