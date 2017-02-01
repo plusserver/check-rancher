@@ -60,10 +60,13 @@ func api(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("X-Api-Schemas", "http://127.0.0.1:8080/v2-beta/schemas")
 		w.WriteHeader(http.StatusOK)
 	} else {
-		if _, err := os.Stat("testcases/" + testcase + path); err == nil {
+		if _, err := os.Stat("testcases/" + testcase + path + "_d"); err == nil {
+			filename = "testcases/" + testcase + path + "_d"
+		} else if _, err := os.Stat("testcases/common" + path + "_d"); err == nil {
+			filename = "testcases/common" + path + "_d"
+		} else if _, err := os.Stat("testcases/" + testcase + path); err == nil {
 			filename = "testcases/" + testcase + path
 		} else if _, err := os.Stat("testcases/common" + path); err == nil {
-
 			filename = "testcases/common" + path
 		} else {
 			panic(path + " not found in common and " + testcase)
@@ -142,6 +145,13 @@ func TestFilterLabels(t *testing.T) {
 	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"ignoreme": "true"}))
 	assert.Equal(t, false, filterLabels(&ccc, map[string]interface{}{"ignoreme": "true", "or": "not"}))
 
+}
+
+func TestParseIncludeEnvironments(t *testing.T) {
+	assert.Equal(t, map[string]bool{}, parseIncludeEnvironments(""))
+	assert.Equal(t, map[string]bool{"production": true}, parseIncludeEnvironments("production"))
+	assert.Equal(t, map[string]bool{"production": true}, parseIncludeEnvironments("production,production"))
+	assert.Equal(t, map[string]bool{"production": true, "staging": true}, parseIncludeEnvironments("production,staging"))
 }
 
 func TestEnvironmentsOk(t *testing.T) {
@@ -274,4 +284,133 @@ func TestServicesBrokenWithExclude(t *testing.T) {
 
 	assert.Equal(t, 2, exitCode)
 	assert.Regexp(t, "monitorme/nothingeverworks", alarm)
+}
+
+// Testcase "IncludeEnvironment"
+// In this test case, both environments have failed hosts each.
+// Default: docker02 docker03 docker04(down) second: docker05 docker06(down)
+// Default has 2/3 of available, second has 1/2 available.
+func TestEnvironmentsWithIncludeEnvironment(t *testing.T) {
+	ccc := initTest("IncludeEnvironment")
+	defer done()
+
+	ccc.includeEnv = map[string]bool{"Default": true}
+	exitCode, alarm := checkEnvironments(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "Default", alarm)
+	assert.NotRegexp(t, "second", alarm)
+
+	ccc.includeEnv = map[string]bool{"second": true}
+	exitCode, alarm = checkEnvironments(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "second", alarm)
+	assert.NotRegexp(t, "Default", alarm)
+}
+
+// With default warning/critical levels, Default should be warning, second critical (configured to <55%)
+// This should be the same when hosts are grouped by environment.
+func TestHostsWithIncludeEnvironment(t *testing.T) {
+	ccc := initTest("IncludeEnvironment")
+	defer done()
+
+	ccc.groupMode = false
+	ccc.critical = 0.55
+
+	ccc.includeEnv = map[string]bool{"Default": true}
+	exitCode, alarm := checkHosts(ccc)
+
+	assert.Equal(t, 1, exitCode)
+	assert.Regexp(t, "docker04", alarm)
+	assert.Regexp(t, "2 of 3 hosts available", alarm)
+	assert.NotRegexp(t, "docker06", alarm)
+
+	ccc.includeEnv = map[string]bool{"second": true}
+	exitCode, alarm = checkHosts(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "docker06", alarm)
+	assert.Regexp(t, "1 of 2 hosts available", alarm)
+	assert.NotRegexp(t, "docker04", alarm)
+
+	ccc.groupMode = true
+	ccc.critical = 0.55
+
+	ccc.includeEnv = map[string]bool{"Default": true}
+	exitCode, alarm = checkHosts(ccc)
+
+	assert.Equal(t, 1, exitCode)
+	assert.Regexp(t, "Default", alarm)
+	assert.Regexp(t, "docker04", alarm)
+	assert.NotRegexp(t, "second", alarm)
+	assert.NotRegexp(t, "docker06", alarm)
+
+	ccc.includeEnv = map[string]bool{"second": true}
+	exitCode, alarm = checkHosts(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "second", alarm)
+	assert.Regexp(t, "docker06", alarm)
+	assert.NotRegexp(t, "Default", alarm)
+	assert.NotRegexp(t, "docker04", alarm)
+
+}
+
+func TestStacksWithIncludeEnvironment(t *testing.T) {
+	ccc := initTest("IncludeEnvironment")
+	defer done()
+
+	ccc.includeEnv = map[string]bool{"Default": true}
+	exitCode, alarm := checkStacks(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "monitorme in env Default", alarm)
+	assert.Regexp(t, "donotmonitorme in env Default", alarm)
+	assert.NotRegexp(t, "blurb in env second", alarm)
+
+	ccc.includeEnv = map[string]bool{"second": true}
+	exitCode, alarm = checkStacks(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "blurb in env second", alarm)
+	assert.NotRegexp(t, "monitorme in env Default", alarm)
+	assert.NotRegexp(t, "donotmonitorme in env Default", alarm)
+}
+
+func TestServicesWithIncludeEnvironment(t *testing.T) {
+	ccc := initTest("IncludeEnvironment")
+	defer done()
+
+	ccc.includeEnv = map[string]bool{"Default": true}
+	ccc.include = map[string]string{}
+
+	exitCode, alarm := checkServices(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "donotmonitorme/broken in env Default", alarm)
+	assert.Regexp(t, "monitorme/nothingeverworks in env Default", alarm)
+	assert.NotRegexp(t, "blurb/works in env second", alarm)
+
+	ccc.includeEnv = map[string]bool{"second": true}
+	ccc.include = map[string]string{}
+
+	exitCode, alarm = checkServices(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.Regexp(t, "blurb/works in env second", alarm)
+	assert.NotRegexp(t, "donotmonitorme/broken in env Default", alarm)
+	assert.NotRegexp(t, "monitorme/nothingeverworks in env Default", alarm)
+
+	// Bonus test with environment and label filter
+	ccc.includeEnv = map[string]bool{"Default": true}
+	ccc.include = map[string]string{"monitor": "true"}
+
+	exitCode, alarm = checkServices(ccc)
+
+	assert.Equal(t, 2, exitCode)
+	assert.NotRegexp(t, "donotmonitorme/broken in env Default", alarm)
+	assert.Regexp(t, "monitorme/nothingeverworks in env Default", alarm)
+	assert.NotRegexp(t, "blurb/works in env second", alarm)
+
 }

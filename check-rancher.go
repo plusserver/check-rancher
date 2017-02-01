@@ -23,6 +23,7 @@ type CheckClientConfig struct {
 	rancher                           *client.RancherClient
 	include, exclude                  map[string]string
 	includeSystem                     bool
+	includeEnv                        map[string]bool
 }
 
 func main() {
@@ -30,7 +31,7 @@ func main() {
 	var ccc CheckClientConfig
 	setupCheck(&ccc)
 
-	var warningPercent, criticalPercent, includeStr, excludeStr string
+	var warningPercent, criticalPercent, includeStr, excludeStr, includeEnv string
 
 	flag.StringVar(&ccc.rancherURL, "url", os.Getenv("RANCHER_URL"), "rancher url (env RANCHER_URL)")
 	flag.StringVar(&ccc.accessKey, "access-key", os.Getenv("RANCHER_ACCESS_KEY"), "rancher access key (env RANCHER_ACCESS_KEY)")
@@ -44,6 +45,7 @@ func main() {
 	flag.StringVar(&includeStr, "i", "", "monitor items with these labels (ignore rest)")
 	flag.StringVar(&excludeStr, "e", "", "do not monitor items with these labels (monitor rest). Using both -i and -e is undefined")
 	flag.BoolVar(&ccc.includeSystem, "system", false, "system stacks only / include system services")
+	flag.StringVar(&includeEnv, "env", "", "limit check to objects in these environments")
 
 	flag.Parse()
 
@@ -75,6 +77,7 @@ func main() {
 
 	ccc.include = parseIncExcludes(includeStr)
 	ccc.exclude = parseIncExcludes(excludeStr)
+	ccc.includeEnv = parseIncludeEnvironments(includeEnv)
 
 	args := flag.Args()
 
@@ -161,6 +164,20 @@ func parseIncExcludes(inc string) map[string]string {
 	return i
 }
 
+func parseIncludeEnvironments(inc string) map[string]bool {
+	i := make(map[string]bool)
+
+	if len(inc) < 1 {
+		return i
+	}
+
+	for _, e := range strings.Split(inc, ",") {
+		i[e] = true
+	}
+
+	return i
+}
+
 func filterLabels(ccc *CheckClientConfig, labels map[string]interface{}) bool {
 	if len(ccc.include) > 0 {
 		for l, v := range labels {
@@ -189,6 +206,7 @@ Usage: check-rancher [options] commands...
     environments - check status of environments
     hosts        - check hosts (-g groups by environment and uses -w/-c)
     stacks       - check status of stacks
+    services     - check status of services
 
 Exit code is NRPE compatible (0: OK, 1: warning, 2: critical, 3: unknown)
 
@@ -241,7 +259,7 @@ func checkEnvironments(ccc *CheckClientConfig) (e int, alarm string) {
 			fmt.Println(envAlarm)
 		}
 
-		if env.State != "active" || env.HealthState != "healthy" {
+		if env.State != "active" || env.HealthState != "healthy" && (len(ccc.includeEnv) == 0 || ccc.includeEnv[env.Name]) {
 			e = 2
 			alarm = alarm + envAlarm + " "
 		}
@@ -264,6 +282,10 @@ func checkHosts(ccc *CheckClientConfig) (e int, alarm string) {
 		environ, err := getEnvironment(rancher, host.AccountId)
 		if err != nil {
 			panic(err)
+		}
+
+		if len(ccc.includeEnv) > 0 && !ccc.includeEnv[environ.Name] {
+			continue
 		}
 
 		groups[environ.Name] = append(groups[environ.Name], host)
@@ -298,15 +320,25 @@ func checkHosts(ccc *CheckClientConfig) (e int, alarm string) {
 		}
 	} else {
 		var avail int = 0
+		var total int = 0
 		for _, host := range hosts.Data {
+			environ, err := getEnvironment(rancher, host.AccountId)
+			if err != nil {
+				panic(err)
+			}
+
+			if len(ccc.includeEnv) > 0 && !ccc.includeEnv[environ.Name] {
+				continue
+			}
 			if host.State != "active" {
 				alarm = alarm + fmt.Sprintf("%s is %s ", host.Hostname, host.State)
 			} else {
 				avail = avail + 1
 			}
+			total = total + 1
 		}
-		availRate := float64(avail) / float64(len(hosts.Data))
-		availStr := fmt.Sprintf("%d of %d hosts available", avail, len(hosts.Data))
+		availRate := float64(avail) / float64(total)
+		availStr := fmt.Sprintf("%d of %d hosts available", avail, total)
 		if availRate < ccc.critical {
 			alarm = alarm + " " + availStr
 			e = 2
@@ -334,6 +366,10 @@ func checkStacks(ccc *CheckClientConfig) (e int, alarm string) {
 		env, err := getEnvironment(rancher, stack.AccountId)
 		if err != nil {
 			panic(err)
+		}
+
+		if len(ccc.includeEnv) > 0 && !ccc.includeEnv[env.Name] {
+			continue
 		}
 
 		if ccc.verboseMode {
@@ -365,6 +401,10 @@ func checkServices(ccc *CheckClientConfig) (e int, alarm string) {
 		env, err := getEnvironment(rancher, stack.AccountId)
 		if err != nil {
 			panic(err)
+		}
+
+		if len(ccc.includeEnv) > 0 && !ccc.includeEnv[env.Name] {
+			continue
 		}
 
 		monitor := filterLabels(ccc, service.LaunchConfig.Labels)
