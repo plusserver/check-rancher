@@ -96,11 +96,11 @@ func main() {
 		AccessKey: ccc.accessKey,
 		SecretKey: ccc.secretKey,
 		Timeout:   10 * time.Second})
+
 	if err != nil {
-		panic(err)
-	}
-	if rancher == nil {
-		panic("did not get a rancher client")
+		fmt.Println("CRITICAL: Cannot connect to rancher server:", err)
+		os.Exit(2)
+	
 	}
 
 	ccc.rancher = rancher
