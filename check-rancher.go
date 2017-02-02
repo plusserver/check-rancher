@@ -31,7 +31,7 @@ func main() {
 	var ccc CheckClientConfig
 	setupCheck(&ccc)
 
-	var warningPercent, criticalPercent, includeStr, excludeStr, includeEnv string
+	var warningPercent, criticalPercent, includeStr, excludeStr, includeEnv, webListen string 
 
 	flag.StringVar(&ccc.rancherURL, "url", os.Getenv("RANCHER_URL"), "rancher url (env RANCHER_URL)")
 	flag.StringVar(&ccc.accessKey, "access-key", os.Getenv("RANCHER_ACCESS_KEY"), "rancher access key (env RANCHER_ACCESS_KEY)")
@@ -46,6 +46,7 @@ func main() {
 	flag.StringVar(&excludeStr, "e", "", "do not monitor items with these labels (monitor rest). Using both -i and -e is undefined")
 	flag.BoolVar(&ccc.includeSystem, "system", false, "system stacks only / include system services")
 	flag.StringVar(&includeEnv, "env", "", "limit check to objects in these environments")
+	flag.StringVar(&webListen, "listen", "0.0.0.0:80", "start webserver at this address:port")
 
 	flag.Parse()
 
@@ -119,6 +120,9 @@ func main() {
 		e, alarm = checkStacks(&ccc)
 	case "services":
 		e, alarm = checkServices(&ccc)
+	case "webserver":
+		webServer(webListen, &ccc)
+		return
 	default:
 		usage()
 		return
@@ -207,6 +211,10 @@ Usage: check-rancher [options] commands...
     hosts        - check hosts (-g groups by environment and uses -w/-c)
     stacks       - check status of stacks
     services     - check status of services
+    
+Running the check as a web server:
+
+    webserver    - run as a webserver (-listen ADDRESS:PORT)
 
 Exit code is NRPE compatible (0: OK, 1: warning, 2: critical, 3: unknown)
 
