@@ -31,7 +31,7 @@ func main() {
 	var ccc CheckClientConfig
 	setupCheck(&ccc)
 
-	var warningPercent, criticalPercent, includeStr, excludeStr, includeEnv, webListen string
+	var warningPercent, criticalPercent, includeStr, excludeStr, includeEnv string
 
 	flag.StringVar(&ccc.rancherURL, "url", os.Getenv("RANCHER_URL"), "rancher url (env RANCHER_URL)")
 	flag.StringVar(&ccc.accessKey, "access-key", os.Getenv("RANCHER_ACCESS_KEY"), "rancher access key (env RANCHER_ACCESS_KEY)")
@@ -46,7 +46,6 @@ func main() {
 	flag.StringVar(&excludeStr, "e", "", "do not monitor items with these labels (monitor rest). Using both -i and -e is undefined")
 	flag.BoolVar(&ccc.includeSystem, "system", false, "system stacks only / include system services")
 	flag.StringVar(&includeEnv, "env", "", "limit check to objects in these environments")
-	flag.StringVar(&webListen, "listen", "0.0.0.0:80", "start webserver at this address:port")
 
 	flag.Parse()
 
