@@ -19,10 +19,12 @@ Monitor all services labeled with "stage=production" and all system (infrastruct
 
 Usage: check-rancher [options] commands...
 ```
-    environments - check status of environments
-    hosts        - check hosts (-g groups by environment and uses -w/-c)
-    stacks       - check status of stacks
-    services     - check status of services
+    environments          - check status of environments
+    hosts                 - check hosts (-g groups by environment and uses -w/-c)
+    stacks                - check status of stacks
+    stack STACK           - check status of a stack
+    services              - check status of services
+    service STACK/SERVICE - check status of a service
 ```
 Exit code is NRPE compatible (0: OK, 1: warning, 2: critical, 3: unknown)
 
