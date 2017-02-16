@@ -24,6 +24,7 @@ type CheckClientConfig struct {
 	include, exclude                  map[string]string
 	includeSystem                     bool
 	includeEnv                        map[string]bool
+	cType, stack, service             string
 }
 
 func main() {
@@ -46,8 +47,16 @@ func main() {
 	flag.StringVar(&excludeStr, "e", "", "do not monitor items with these labels (monitor rest). Using both -i and -e is undefined")
 	flag.BoolVar(&ccc.includeSystem, "system", false, "system stacks only / include system services")
 	flag.StringVar(&includeEnv, "env", "", "limit check to objects in these environments")
+	flag.StringVar(&ccc.cType, "type", "", "object to check (stack, service)")
+	flag.StringVar(&ccc.stack, "stack", "", "stack name to check (requires env)")
+	flag.StringVar(&ccc.service, "service", "", "service name to check (requires env and stack")
 
 	flag.Parse()
+
+	if helpMode {
+		usage()
+		return
+	}
 
 	if len(ccc.rancherURL) < 1 {
 		fmt.Println("need rancher URL")
@@ -81,16 +90,6 @@ func main() {
 
 	args := flag.Args()
 
-	if len(args) == 0 {
-		usage()
-		return
-	}
-
-	if helpMode {
-		usage()
-		return
-	}
-
 	rancher, err := client.NewRancherClient(&client.ClientOpts{
 		Url:       ccc.rancherURL,
 		AccessKey: ccc.accessKey,
@@ -100,7 +99,6 @@ func main() {
 	if err != nil {
 		fmt.Println("CRITICAL: Cannot connect to rancher server:", err)
 		os.Exit(2)
-
 	}
 
 	ccc.rancher = rancher
@@ -108,24 +106,36 @@ func main() {
 	var e int
 	var alarm string
 
-	switch args[0] {
-	case "all":
-		cmdAll(&ccc)
-	case "environments":
-		e, alarm = checkEnvironments(&ccc)
-	case "hosts":
-		e, alarm = checkHosts(&ccc)
-	case "stacks":
-		e, alarm = checkStacks(&ccc)
-	case "stack":
-		e, alarm = checkStack(&ccc, args[1])
-	case "services":
-		e, alarm = checkServices(&ccc)
-	case "service":
-		e, alarm = checkService(&ccc, args[1])
-	default:
-		usage()
-		return
+	if len(args) == 0 {
+		// incinga2 compatible mode without unnamed command line arguments
+		if ccc.cType == "stack" {
+			e, alarm = checkStack(&ccc, ccc.stack)
+		} else if ccc.cType == "service" {
+			e, alarm = checkService(&ccc, ccc.stack+"/"+ccc.service)
+		} else {
+			usage()
+			return
+		}
+	} else {
+		switch args[0] {
+		case "all":
+			cmdAll(&ccc)
+		case "environments":
+			e, alarm = checkEnvironments(&ccc)
+		case "hosts":
+			e, alarm = checkHosts(&ccc)
+		case "stacks":
+			e, alarm = checkStacks(&ccc)
+		case "stack":
+			e, alarm = checkStack(&ccc, args[1])
+		case "services":
+			e, alarm = checkServices(&ccc)
+		case "service":
+			e, alarm = checkService(&ccc, args[1])
+		default:
+			usage()
+			return
+		}
 	}
 
 	if e == 0 {
@@ -413,7 +423,7 @@ func checkStack(ccc *CheckClientConfig, stackName string) (int, string) {
 		}
 	}
 
-	return 2, "stack not found"
+	return 2, "stack " + stackName + " not found"
 }
 
 func checkServices(ccc *CheckClientConfig) (e int, alarm string) {
@@ -490,5 +500,5 @@ func checkService(ccc *CheckClientConfig, stackServiceName string) (int, string)
 		}
 	}
 
-	return 2, "service not found"
+	return 2, "service " + stackServiceName + " not found"
 }
