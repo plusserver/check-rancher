@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/rancher/go-rancher/v2"
@@ -18,13 +17,8 @@ var stackCache map[string]*client.Stack
 
 type CheckClientConfig struct {
 	rancherURL, accessKey, secretKey  string
-	debugMode, verboseMode, groupMode bool
-	warning, critical                 float64
 	rancher                           *client.RancherClient
-	include, exclude                  map[string]string
-	includeSystem                     bool
-	includeEnv                        map[string]bool
-	cType, stack, service             string
+	stack, service, host, environment string
 }
 
 func main() {
@@ -32,24 +26,17 @@ func main() {
 	var ccc CheckClientConfig
 	setupCheck(&ccc)
 
-	var warningPercent, criticalPercent, includeStr, excludeStr, includeEnv string
+	var checkType string // unused, for compatibility with rancher-icinga
 
 	flag.StringVar(&ccc.rancherURL, "url", os.Getenv("RANCHER_URL"), "rancher url (env RANCHER_URL)")
 	flag.StringVar(&ccc.accessKey, "access-key", os.Getenv("RANCHER_ACCESS_KEY"), "rancher access key (env RANCHER_ACCESS_KEY)")
 	flag.StringVar(&ccc.secretKey, "secret-key", os.Getenv("RANCHER_SECRET_KEY"), "rancher secret key (env RANCHER_SECRET_KEY)")
-	flag.BoolVar(&ccc.verboseMode, "v", false, "verbose mode - show status of all checked resources")
-	flag.BoolVar(&ccc.debugMode, "d", false, "debug mode (current unused)")
 	flag.BoolVar(&helpMode, "h", false, "help")
-	flag.BoolVar(&ccc.groupMode, "g", false, "group resources, for example all hosts of an environments / all containers of a service")
-	flag.StringVar(&warningPercent, "w", "100%", "warning if less that many percent of resources are available")
-	flag.StringVar(&criticalPercent, "c", "50%", "critical if less that many percent of resources are available")
-	flag.StringVar(&includeStr, "i", "", "monitor items with these labels (ignore rest)")
-	flag.StringVar(&excludeStr, "e", "", "do not monitor items with these labels (monitor rest). Using both -i and -e is undefined")
-	flag.BoolVar(&ccc.includeSystem, "system", false, "system stacks only / include system services")
-	flag.StringVar(&includeEnv, "env", "", "limit check to objects in these environments")
-	flag.StringVar(&ccc.cType, "type", "", "object to check (stack, service)")
+	flag.StringVar(&ccc.environment, "env", "Default", "limit check to objects in this environment")
+	flag.StringVar(&checkType, "type", "", "(ignored)")
 	flag.StringVar(&ccc.stack, "stack", "", "stack name to check (requires env)")
 	flag.StringVar(&ccc.service, "service", "", "service name to check (requires env and stack")
+	flag.StringVar(&ccc.host, "host", "", "host to check")
 
 	flag.Parse()
 
@@ -67,26 +54,6 @@ func main() {
 		fmt.Println("need access key / secret key")
 		os.Exit(2)
 	}
-
-	if len(warningPercent) > 0 {
-		var w int
-		fmt.Sscanf(warningPercent, "%d%%", &w)
-		ccc.warning = float64(w) / float64(100)
-	} else {
-		ccc.warning = 0
-	}
-
-	if len(criticalPercent) > 0 {
-		var c int
-		fmt.Sscanf(criticalPercent, "%d%%", &c)
-		ccc.critical = float64(c) / float64(100)
-	} else {
-		ccc.critical = 0
-	}
-
-	ccc.include = parseIncExcludes(includeStr)
-	ccc.exclude = parseIncExcludes(excludeStr)
-	ccc.includeEnv = parseIncludeEnvironments(includeEnv)
 
 	args := flag.Args()
 
@@ -106,40 +73,24 @@ func main() {
 	var e int
 	var alarm string
 
-	if len(args) == 0 {
-		// incinga2 compatible mode without unnamed command line arguments
-		if ccc.cType == "stack" {
-			e, alarm = checkStack(&ccc, ccc.stack)
-		} else if ccc.cType == "service" {
-			e, alarm = checkService(&ccc, ccc.stack+"/"+ccc.service)
-		} else {
-			usage()
-			return
-		}
+	if len(args) != 0 {
+		usage()
+		return
+	}
+
+	if ccc.stack != "" && ccc.environment != "" && ccc.service == "" {
+		e, alarm = checkStack(&ccc)
+	} else if ccc.service != "" && ccc.stack != "" && ccc.environment != "" {
+		e, alarm = checkService(&ccc)
+	} else if ccc.host != "" {
+		e, alarm = checkHost(&ccc)
 	} else {
-		switch args[0] {
-		case "all":
-			cmdAll(&ccc)
-		case "environments":
-			e, alarm = checkEnvironments(&ccc)
-		case "hosts":
-			e, alarm = checkHosts(&ccc)
-		case "stacks":
-			e, alarm = checkStacks(&ccc)
-		case "stack":
-			e, alarm = checkStack(&ccc, args[1])
-		case "services":
-			e, alarm = checkServices(&ccc)
-		case "service":
-			e, alarm = checkService(&ccc, args[1])
-		default:
-			usage()
-			return
-		}
+		usage()
+		return
 	}
 
 	if e == 0 {
-		fmt.Println("OK")
+		fmt.Println("OK:", alarm)
 	} else if e == 1 {
 		fmt.Println("WARNING:", alarm)
 	} else if e == 2 {
@@ -153,76 +104,19 @@ func main() {
 
 func setupCheck(ccc *CheckClientConfig) {
 
-	// defaults relevant in tests
-	ccc.warning = 1
-	ccc.critical = 0.5
-
 	environmentCache = make(map[string]*client.Project)
 	stackCache = make(map[string]*client.Stack)
-}
-
-func parseIncExcludes(inc string) map[string]string {
-	i := make(map[string]string)
-
-	if len(inc) < 1 {
-		return i
-	}
-
-	for _, p := range strings.Split(inc, ",") {
-		a := strings.Split(p, "=")
-		if len(a) == 2 {
-			i[a[0]] = a[1]
-		}
-	}
-
-	return i
-}
-
-func parseIncludeEnvironments(inc string) map[string]bool {
-	i := make(map[string]bool)
-
-	if len(inc) < 1 {
-		return i
-	}
-
-	for _, e := range strings.Split(inc, ",") {
-		i[e] = true
-	}
-
-	return i
-}
-
-func filterLabels(ccc *CheckClientConfig, labels map[string]interface{}) bool {
-	if len(ccc.include) > 0 {
-		for l, v := range labels {
-			if ccc.include[l] == v {
-				return true
-			}
-		}
-		return false
-	} else if len(ccc.exclude) > 0 {
-		for l, v := range labels {
-			if ccc.exclude[l] == v {
-				return false
-			}
-		}
-	}
-	return true
-
 }
 
 func usage() {
 	fmt.Println(
 		`check-rancher - rancher monitoring utility
 
-Usage: check-rancher [options] commands...
+Usage: check-rancher [options]...
 
-    environments          - check status of environments
-    hosts                 - check hosts (-g groups by environment and uses -w/-c)
-    stacks                - check status of stacks
-    stack STACK           - check status of a stack
-    services              - check status of services
-    service STACK/SERVICE - check status of a service
+	check-rancher -host my.rancher.agent.com
+	check-rancher -env PROD -stack mystack
+	check-rancher -env DEV -stack ipsec -service ipsec
     
 Exit code is NRPE compatible (0: OK, 1: warning, 2: critical, 3: unknown)
 
@@ -230,8 +124,6 @@ Options:
 `)
 	flag.PrintDefaults()
 }
-
-func cmdAll(ccc *CheckClientConfig) {}
 
 func debugOutput(something interface{}) {
 	out, _ := json.MarshalIndent(something, "", "  ")
@@ -260,31 +152,79 @@ func getStack(rancher *client.RancherClient, id string) (st *client.Stack, err e
 	return
 }
 
-func checkEnvironments(ccc *CheckClientConfig) (e int, alarm string) {
+func checkStack(ccc *CheckClientConfig) (int, string) {
 	rancher := ccc.rancher
-	environments, err := rancher.Project.List(nil)
+
+	stacks, err := rancher.Stack.List(nil)
+
 	if err != nil {
 		panic(err)
 	}
 
-	e = 0
+	for _, stack := range stacks.Data {
 
-	for _, env := range environments.Data {
-		envAlarm := fmt.Sprintf("env %s running %s with %d active hosts is %s/%s", env.Name, env.Orchestration, len(env.Members), env.State, env.HealthState)
-		if ccc.verboseMode {
-			fmt.Println(envAlarm)
+		env, err := getEnvironment(rancher, stack.AccountId)
+
+		if err != nil {
+			panic(err)
 		}
 
-		if env.State != "active" || env.HealthState != "healthy" && (len(ccc.includeEnv) == 0 || ccc.includeEnv[env.Name]) {
-			e = 2
-			alarm = alarm + envAlarm + " "
+		if stack.Name == ccc.stack && env.Name == ccc.environment {
+			summary := fmt.Sprintf("stack %s in environment %s is %s and %s", ccc.stack, env.Name, stack.State, stack.HealthState)
+			
+			if err != nil {
+				panic(err)
+			}
+
+			if stack.State == "active" && stack.HealthState == "healthy" {
+				return 0, summary
+			} else {
+				return 2, summary
+			}
 		}
 	}
 
-	return
+	return 2, "stack " + ccc.stack + " not found in environment " + ccc.environment
 }
 
-func checkHosts(ccc *CheckClientConfig) (e int, alarm string) {
+func checkService(ccc *CheckClientConfig) (int, string) {
+	rancher := ccc.rancher
+
+	services, err := rancher.Service.List(nil)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for _, service := range services.Data {
+
+		stack, err := getStack(rancher, service.StackId)
+
+		if err != nil {
+			panic(err)
+		}
+
+		env, err := getEnvironment(rancher, stack.AccountId)
+
+		if err != nil {
+			panic(err)
+		}
+
+		if stack.Name == ccc.stack && service.Name == ccc.service && env.Name == ccc.environment {
+			summary := fmt.Sprintf("service %s/%s in environment %s is %s ", stack.Name, service.Name, env.Name, service.HealthState)
+			
+			if service.HealthState == "healthy" {
+				return 0, summary
+			} else {
+				return 2, summary
+			}
+		}
+	}
+
+	return 2, "service " + ccc.stack + "/" + ccc.service + " not found in environment " + ccc.environment
+}
+
+func checkHost(ccc *CheckClientConfig) (e int, alarm string) {
 	rancher := ccc.rancher
 
 	hosts, err := rancher.Host.List(nil)
@@ -292,213 +232,17 @@ func checkHosts(ccc *CheckClientConfig) (e int, alarm string) {
 		panic(err)
 	}
 
-	groups := make(map[string][]client.Host)
-
 	for _, host := range hosts.Data {
-		environ, err := getEnvironment(rancher, host.AccountId)
-		if err != nil {
-			panic(err)
-		}
-
-		if len(ccc.includeEnv) > 0 && !ccc.includeEnv[environ.Name] {
-			continue
-		}
-
-		groups[environ.Name] = append(groups[environ.Name], host)
-
-		if ccc.verboseMode {
-			fmt.Printf("%s(%s) in env %s is %s %s\n", host.Hostname, host.AgentIpAddress, environ.Name, host.State, host.Labels)
-		}
-	}
-
-	if ccc.groupMode {
-		var alarm2 string
-		for environ, hosts := range groups {
-			var avail int = 0
-			for _, host := range hosts {
-				if host.State != "active" {
-					alarm2 = alarm2 + fmt.Sprintf("%s is %s ", host.Hostname, host.State)
-				} else {
-					avail = avail + 1
-				}
-			}
-			availRate := float64(avail) / float64(len(hosts))
-			availStr := fmt.Sprintf("%d of %d hosts available", avail, len(hosts))
-			if availRate < ccc.critical {
-				alarm = alarm + fmt.Sprintf("%s: %s: %s ", environ, availStr, alarm2)
-				e = 2
-			} else if availRate < ccc.warning {
-				alarm = alarm + fmt.Sprintf("%s: %s: %s ", environ, availStr, alarm2)
-				if e == 0 {
-					e = 1
-				}
-			}
-		}
-	} else {
-		var avail int = 0
-		var total int = 0
-		for _, host := range hosts.Data {
-			environ, err := getEnvironment(rancher, host.AccountId)
-			if err != nil {
-				panic(err)
-			}
-
-			if len(ccc.includeEnv) > 0 && !ccc.includeEnv[environ.Name] {
-				continue
-			}
-			if host.State != "active" {
-				alarm = alarm + fmt.Sprintf("%s is %s ", host.Hostname, host.State)
+		if host.Hostname == ccc.host {
+			if host.State == "active" {
+				return 0, "host " + ccc.host + " is " + host.State
+			} else if host.State == "inactive" {
+				return 1, "host " + ccc.host + " is " + host.State + " (this is probably intentional)"
 			} else {
-				avail = avail + 1
-			}
-			total = total + 1
-		}
-		availRate := float64(avail) / float64(total)
-		availStr := fmt.Sprintf("%d of %d hosts available", avail, total)
-		if availRate < ccc.critical {
-			alarm = alarm + " " + availStr
-			e = 2
-		} else if availRate < ccc.warning {
-			alarm = alarm + " " + availStr
-			if e == 0 {
-				e = 1
+				return 2, "host " + ccc.host + " is " + host.State
 			}
 		}
 	}
 
-	return
-}
-
-func checkStacks(ccc *CheckClientConfig) (e int, alarm string) {
-	rancher := ccc.rancher
-	stacks, err := rancher.Stack.List(nil)
-	if err != nil {
-		panic(err)
-	}
-
-	e = 0
-
-	for _, stack := range stacks.Data {
-		env, err := getEnvironment(rancher, stack.AccountId)
-		if err != nil {
-			panic(err)
-		}
-
-		if len(ccc.includeEnv) > 0 && !ccc.includeEnv[env.Name] {
-			continue
-		}
-
-		if ccc.verboseMode {
-			fmt.Printf("%s in env %s is %s/%s\n", stack.Name, env.Name, stack.State, stack.HealthState)
-		}
-
-		if stack.State != "active" || stack.HealthState != "healthy" && (ccc.includeSystem == false || stack.System) {
-			alarm = alarm + fmt.Sprintf("%s in env %s (%s/%s) ", stack.Name, env.Name, stack.State, stack.HealthState)
-			e = 2
-		}
-	}
-
-	return
-}
-
-func checkStack(ccc *CheckClientConfig, stackName string) (int, string) {
-	rancher := ccc.rancher
-	stacks, err := rancher.Stack.List(nil)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, stack := range stacks.Data {
-		env, err := getEnvironment(rancher, stack.AccountId)
-		if err != nil {
-			panic(err)
-		}
-
-		if stack.Name == stackName && ccc.includeEnv[env.Name] {
-			if stack.State == "active" && stack.HealthState == "healthy" {
-				return 0, "OK"
-			} else {
-				return 2, fmt.Sprintf("%s in env %s (%s/%s) ", stack.Name, env.Name, stack.State, stack.HealthState)
-			}
-		}
-	}
-
-	return 2, "stack " + stackName + " not found"
-}
-
-func checkServices(ccc *CheckClientConfig) (e int, alarm string) {
-	rancher := ccc.rancher
-	services, err := rancher.Service.List(nil)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, service := range services.Data {
-		stack, err := getStack(rancher, service.StackId)
-		if err != nil {
-			panic(err)
-		}
-
-		env, err := getEnvironment(rancher, stack.AccountId)
-		if err != nil {
-			panic(err)
-		}
-
-		if len(ccc.includeEnv) > 0 && !ccc.includeEnv[env.Name] {
-			continue
-		}
-
-		monitor := filterLabels(ccc, service.LaunchConfig.Labels)
-
-		if ccc.includeSystem && service.System {
-			monitor = true
-		}
-
-		if ccc.verboseMode {
-			fmt.Printf("env=%s, stack=%s, currentscale=%d health=%s, name=%s, scale=%d, stackid=%s, state=%s, transition=%s, transitionmessage=%s, transitioningprogress=%d, labels=%s, system=%t, monitor=%t\n",
-				env.Name, stack.Name, service.CurrentScale, service.HealthState, service.Name, service.Scale, service.StackId, service.State, service.Transitioning, service.TransitioningMessage, service.TransitioningProgress, service.LaunchConfig.Labels, service.System, monitor)
-		}
-
-		if monitor && service.HealthState != "healthy" {
-			alarm = alarm + fmt.Sprintf("%s/%s in env %s is %s ", stack.Name, service.Name, env.Name, service.HealthState)
-			e = 2
-		}
-	}
-
-	return
-}
-
-func checkService(ccc *CheckClientConfig, stackServiceName string) (int, string) {
-	rancher := ccc.rancher
-
-	x := strings.Split(stackServiceName, "/")
-	stackName := x[0]
-	serviceName := x[1]
-
-	services, err := rancher.Service.List(nil)
-	if err != nil {
-		panic(err)
-	}
-
-	for _, service := range services.Data {
-		stack, err := getStack(rancher, service.StackId)
-		if err != nil {
-			panic(err)
-		}
-
-		env, err := getEnvironment(rancher, stack.AccountId)
-		if err != nil {
-			panic(err)
-		}
-
-		if stack.Name == stackName && service.Name == serviceName && ccc.includeEnv[env.Name] {
-			if service.HealthState == "healthy" {
-				return 0, "OK"
-			} else {
-				return 2, fmt.Sprintf("%s/%s in env %s is %s ", stack.Name, service.Name, env.Name, service.HealthState)
-			}
-		}
-	}
-
-	return 2, "service " + stackServiceName + " not found"
+	return 3, "host " + ccc.host + " not found"
 }
