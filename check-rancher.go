@@ -123,6 +123,7 @@ Exit code is NRPE compatible (0: OK, 1: warning, 2: critical, 3: unknown)
 Options:
 `)
 	flag.PrintDefaults()
+	os.Exit(3)
 }
 
 func debugOutput(something interface{}) {
