@@ -156,13 +156,23 @@ func getStack(rancher *client.RancherClient, id string) (st *client.Stack, err e
 func checkStack(ccc *CheckClientConfig) (int, string) {
 	rancher := ccc.rancher
 
-	stacks, err := rancher.Stack.List(nil)
+	stackList, err := rancher.Stack.List(nil)
+	stackArr := stackList.Data
 
 	if err != nil {
-		panic(err)
+		return 3, fmt.Sprintf("could not fetch services from rancher: %s", err)
 	}
 
-	for _, stack := range stacks.Data {
+	for stackList.Pagination != nil && stackList.Pagination.Partial {
+		stackList, err = stackList.Next()
+		if err != nil {
+			return 3, fmt.Sprintf("could not fetch stacks from rancher: %s", err)
+		}
+
+		stackArr = append(stackArr, stackList.Data...)
+	}
+
+	for _, stack := range stackArr {
 
 		env, err := getEnvironment(rancher, stack.AccountId)
 
@@ -172,7 +182,7 @@ func checkStack(ccc *CheckClientConfig) (int, string) {
 
 		if stack.Name == ccc.stack && env.Name == ccc.environment {
 			summary := fmt.Sprintf("stack %s in environment %s is %s and %s", ccc.stack, env.Name, stack.State, stack.HealthState)
-			
+
 			if err != nil {
 				panic(err)
 			}
@@ -190,14 +200,23 @@ func checkStack(ccc *CheckClientConfig) (int, string) {
 
 func checkService(ccc *CheckClientConfig) (int, string) {
 	rancher := ccc.rancher
-
-	services, err := rancher.Service.List(nil)
+	serviceList, err := rancher.Service.List(nil)
+	serviceArr := serviceList.Data
 
 	if err != nil {
-		panic(err)
+		return 3, fmt.Sprintf("could not fetch services from rancher: %s", err)
 	}
 
-	for _, service := range services.Data {
+	for serviceList.Pagination != nil && serviceList.Pagination.Partial {
+		serviceList, err = serviceList.Next()
+		if err != nil {
+			return 3, fmt.Sprintf("could not fetch services from rancher: %s", err)
+		}
+
+		serviceArr = append(serviceArr, serviceList.Data...)
+	}
+
+	for _, service := range serviceArr {
 
 		stack, err := getStack(rancher, service.StackId)
 
@@ -213,7 +232,7 @@ func checkService(ccc *CheckClientConfig) (int, string) {
 
 		if stack.Name == ccc.stack && service.Name == ccc.service && env.Name == ccc.environment {
 			summary := fmt.Sprintf("service %s/%s in environment %s is %s ", stack.Name, service.Name, env.Name, service.HealthState)
-			
+
 			if service.HealthState == "healthy" {
 				return 0, summary
 			} else {
@@ -228,12 +247,23 @@ func checkService(ccc *CheckClientConfig) (int, string) {
 func checkHost(ccc *CheckClientConfig) (e int, alarm string) {
 	rancher := ccc.rancher
 
-	hosts, err := rancher.Host.List(nil)
+	hostList, err := rancher.Host.List(nil)
+	hostArr := hostList.Data
+
 	if err != nil {
-		panic(err)
+		return 3, fmt.Sprintf("could not fetch hosts from rancher: %s", err)
 	}
 
-	for _, host := range hosts.Data {
+	for hostList.Pagination != nil && hostList.Pagination.Partial {
+		hostList, err = hostList.Next()
+		if err != nil {
+			return 3, fmt.Sprintf("could not fetch hosts from rancher: %s", err)
+		}
+
+		hostArr = append(hostArr, hostList.Data...)
+	}
+
+	for _, host := range hostArr {
 		if host.Hostname == ccc.host {
 			if host.State == "active" {
 				return 0, "host " + ccc.host + " is " + host.State
