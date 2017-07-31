@@ -233,7 +233,7 @@ func checkService(ccc *CheckClientConfig) (int, string) {
 		if stack.Name == ccc.stack && service.Name == ccc.service && env.Name == ccc.environment {
 			summary := fmt.Sprintf("service %s/%s in environment %s is %s ", stack.Name, service.Name, env.Name, service.HealthState)
 
-			if service.HealthState == "healthy" {
+			if service.HealthState == "healthy" || service.HealthState == "started-once" {
 				return 0, summary
 			} else {
 				return 2, summary
