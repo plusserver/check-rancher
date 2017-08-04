@@ -3,3 +3,4 @@ mktestcase.sh
 check-rancher
 pkg
 src
+dist
